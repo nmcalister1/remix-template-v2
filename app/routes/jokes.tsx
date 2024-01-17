@@ -1,4 +1,4 @@
-import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import {
   Form,
@@ -7,14 +7,8 @@ import {
   useLoaderData,
 } from "@remix-run/react";
 import { z } from "zod";
-
-import stylesUrl from "~/styles/jokes.css";
 import { db } from "~/utils/db.server";
 import { getUser } from "~/utils/session.server";
-
-export const links: LinksFunction = () => [
-  { rel: "stylesheet", href: stylesUrl },
-];
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const jokesList = await db.joke.findMany({
@@ -46,24 +40,24 @@ export default function JokesRoute() {
   const data = useLoaderData<typeof loader>();
 
   return (
-    <div className="jokes-layout">
-      <header className="jokes-header">
-        <div className="container">
-          <h1 className="home-link">
+    <div>
+      <header>
+        <div>
+          <h1>
             <Link
               to="/"
               title="Remix Jokes"
               aria-label="Remix Jokes"
             >
-              <span className="logo">🤪</span>
-              <span className="logo-medium">J🤪KES</span>
+              <span>🤪</span>
+              <span>J🤪KES</span>
             </Link>
           </h1>
           {data.user ? (
-            <div className="user-info">
+            <div>
               <span>{`Hi ${data.user.username}`}</span>
               <Form action="/logout" method="post">
-                <button type="submit" className="button">
+                <button type="submit">
                   Logout
                 </button>
               </Form>
@@ -73,9 +67,9 @@ export default function JokesRoute() {
           )}
         </div>
       </header>
-      <main className="jokes-main">
-        <div className="container">
-          <div className="jokes-list">
+      <main>
+        <div>
+          <div>
             <Link to=".">Get a random joke</Link>
             <p>Here are a few more jokes to check out:</p>
             <ul>
@@ -85,11 +79,11 @@ export default function JokesRoute() {
                 </li>
               ))}
             </ul>
-            <Link to="new" className="button">
+            <Link to="new">
               Add your own
             </Link>
           </div>
-          <div className="jokes-outlet">
+          <div>
             <Outlet />
           </div>
         </div>

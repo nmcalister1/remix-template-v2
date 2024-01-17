@@ -1,25 +1,10 @@
-import type { ActionFunctionArgs, LinksFunction, MetaFunction } from "@remix-run/node";
+import type { ActionFunctionArgs } from "@remix-run/node";
 import { Form, Link, json, useActionData, useSearchParams } from "@remix-run/react";
 import { HTMLAttributes } from "react";
 import { z } from "zod";
 
-import stylesUrl from "~/styles/login.css";
 import { db } from "~/utils/db.server";
 import { createUserSession, login, register } from "~/utils/session.server";
-
-export const links: LinksFunction = () => [
-  { rel: "stylesheet", href: stylesUrl },
-];
-
-export const meta: MetaFunction = () => {
-  const description = "Login to submit your own jokes to Remix Jokes!"
-
-  return [
-    { name: "description", content: description},
-    { name: "twitter:description", content: description},
-    { title: "Remix Jokes | Login" }
-  ]
-}
 
 function validateUrl(url: string) {
     const urls = ["/jokes", "/", "https://remix.run"];
@@ -95,8 +80,8 @@ export default function Login() {
     const actionData = useActionData<typeof action>()
   const [searchParams] = useSearchParams();
   return (
-    <div className="container">
-      <div className="content" data-light="">
+    <div>
+      <div data-light="">
         <h1>Login</h1>
         <Form method="post">
           <input
@@ -107,7 +92,7 @@ export default function Login() {
             }
           />
           <fieldset>
-            <legend className="sr-only">
+            <legend>
               Login or Register?
             </legend>
             <label>
@@ -145,7 +130,6 @@ export default function Login() {
             <ErrorMessage>
                 {actionData?.errors?.username ? (
                 <p
-                    className="form-validation-error"
                     role="alert"
                     id="username-error"
                 >
@@ -165,7 +149,6 @@ export default function Login() {
             <ErrorMessage>
                 {actionData?.errors?.passwordHash ? (
                 <p
-                    className="form-validation-error"
                     role="alert"
                     id="password-error"
                 >
@@ -177,19 +160,18 @@ export default function Login() {
           <div id="form-error-message">
             {actionData?.data?.error ? (
               <p
-                className="form-validation-error"
                 role="alert"
               >
                 {actionData?.data?.error}
               </p>
             ) : null}
           </div>
-          <button type="submit" className="button">
+          <button type="submit">
             Submit
           </button>
         </Form>
       </div>
-      <div className="links">
+      <div>
         <ul>
           <li>
             <Link to="/">Home</Link>

@@ -14,7 +14,6 @@ export function JokeDisplay({ canDelete = true, isOwner, joke}: {
             {isOwner ? (
                 <Form method="post">
                     <button
-                        className="button"
                         disabled={!canDelete}
                         name="intent"
                         type="submit"

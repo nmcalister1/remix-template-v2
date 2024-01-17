@@ -97,7 +97,7 @@ export default function NewJokeRoute() {
             </ErrorMessage>
           </div>
           <div>
-            <button type="submit" className="button">
+            <button type="submit">
               Add
             </button>
           </div>
