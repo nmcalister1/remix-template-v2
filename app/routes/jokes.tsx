@@ -1,12 +1,11 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import {
-  Form,
-  Link,
   Outlet,
   useLoaderData,
 } from "@remix-run/react";
 import { z } from "zod";
+import NavBar from "~/components/navbar";
 import { db } from "~/utils/db.server";
 import { getUser } from "~/utils/session.server";
 
@@ -42,15 +41,14 @@ export default function JokesRoute() {
   return (
     <div>
       <header>
-        <div>
+        {/* <nav>
           <h1>
             <Link
               to="/"
               title="Remix Jokes"
               aria-label="Remix Jokes"
             >
-              <span>🤪</span>
-              <span>J🤪KES</span>
+              <span>Jex</span>
             </Link>
           </h1>
           {data.user ? (
@@ -65,10 +63,14 @@ export default function JokesRoute() {
           ) : (
             <Link to='/login'>Login</Link>
           )}
-        </div>
+        </nav> */}
+        {/* <NavBar /> */}
+        
+
       </header>
       <main>
-        <div>
+        <Outlet />
+        {/* <div>
           <div>
             <Link to=".">Get a random joke</Link>
             <p>Here are a few more jokes to check out:</p>
@@ -86,7 +88,7 @@ export default function JokesRoute() {
           <div>
             <Outlet />
           </div>
-        </div>
+        </div> */}
       </main>
     </div>
   );

@@ -2,6 +2,7 @@ import { LinksFunction } from "@remix-run/node";
 import { Links, LiveReload, Meta, Outlet, Scripts, isRouteErrorResponse, useRouteError } from "@remix-run/react";
 import { PropsWithChildren } from "react";
 import stylesheet from "~/tailwind.css";
+import NavBar from "./components/navbar";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
@@ -35,6 +36,7 @@ function Document({
 export default function App() {
   return (
     <Document>
+      <NavBar />
       <Outlet />
     </Document>
   );

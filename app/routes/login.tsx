@@ -80,9 +80,9 @@ export default function Login() {
     const actionData = useActionData<typeof action>()
   const [searchParams] = useSearchParams();
   return (
-    <div>
+    <div className="bg-rose-600 m-auto h-screen p-5">
       <div data-light="">
-        <h1>Login</h1>
+        <h1 className="flex justify-center text-5xl p-3 pb-4 font-bold text-stone-100 drop-shadow-2xl">Login</h1>
         <Form method="post">
           <input
             type="hidden"
@@ -91,11 +91,11 @@ export default function Login() {
               searchParams.get("redirectTo") ?? undefined
             }
           />
-          <fieldset>
-            <legend>
+          <fieldset className="border-2 border-white p-2 m-auto my-4 w-1/4 flex justify-center">
+            <legend className="text-stone-100 m-auto drop-shadow-sm font-medium">
               Login or Register?
             </legend>
-            <label>
+            <label className="text-stone-100 p-2 cursor-pointer">
               <input
                 type="radio"
                 name="loginType"
@@ -107,7 +107,7 @@ export default function Login() {
               />{" "}
               Login
             </label>
-            <label>
+            <label className="text-stone-100 p-2 cursor-pointer">
               <input
                 type="radio"
                 name="loginType"
@@ -120,13 +120,16 @@ export default function Login() {
             </label>
           </fieldset>
           <div>
-            <label htmlFor="username-input">Username</label>
+            <label htmlFor="username-input" className="flex justify-center text-stone-100 font-medium drop-shadow-sm p-2">Username</label>
+            <div className="flex justify-center">
             <input
               type="text"
               id="username-input"
               name="username"
+              className="border-solid border-2 border-rose-500 outline-none rounded-md hover:border-rose-800 focus:border-rose-800 drop-shadow-sm w-1/4"
               defaultValue={actionData?.data?.username}
             />
+            </div>
             <ErrorMessage>
                 {actionData?.errors?.username ? (
                 <p
@@ -139,13 +142,16 @@ export default function Login() {
             </ErrorMessage>
           </div>
           <div>
-            <label htmlFor="password-input">Password</label>
+            <label htmlFor="password-input" className="flex justify-center text-stone-100 font-medium drop-shadow-sm p-2">Password</label>
+            <div className="flex justify-center">
             <input
               id="password-input"
               name="password"
               type="password"
+              className="border-solid border-2 border-rose-500 outline-none rounded-md hover:border-rose-800 focus:border-rose-800 drop-shadow-sm w-1/4"
               defaultValue={actionData?.data?.passwordHash}
             />
+            </div>
             <ErrorMessage>
                 {actionData?.errors?.passwordHash ? (
                 <p
@@ -166,18 +172,20 @@ export default function Login() {
               </p>
             ) : null}
           </div>
-          <button type="submit">
+          <div className="flex justify-center">
+          <button type="submit"  className="bg-rose-800 hover:bg-rose-700 text-white font-bold p-1 w-1/4 mt-9 rounded-full">
             Submit
           </button>
+          </div>
         </Form>
       </div>
-      <div>
-        <ul>
-          <li>
-            <Link to="/">Home</Link>
+      <div className="flex justify-center bg-rose-600">
+        <ul className="flex justify-center p-3">
+          <li className="p-4 mx-2">
+            <Link to="/" className="text-stone-100">Home</Link>
           </li>
-          <li>
-            <Link to="/jokes">Jokes</Link>
+          <li className="p-4 mx-2">
+            <Link to="/jokes" className="text-stone-100">Jokes</Link>
           </li>
         </ul>
       </div>
