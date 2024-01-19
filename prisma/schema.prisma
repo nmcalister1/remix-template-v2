@@ -16,15 +16,27 @@ model User {
   updatedAt DateTime @updatedAt
   username String @unique
   passwordHash String
-  jokes Joke[]
+  hasAnsweredQuestion Boolean
+  posts Post[]
 }
 
-model Joke {
+model Post {
   id String @id @default(uuid())
-  jokesterId String
-  jokester User @relation(fields: [jokesterId], references: [id], onDelete: Cascade)
+  posterId String
+  posterUsername String
+  poster User @relation(fields: [posterId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  name String
-  content String 
+  content String
 }
+
+// model Joke {
+//   id String @id @default(uuid())
+//   jokesterId String
+//   jokester User @relation(fields: [jokesterId], references: [id], onDelete: Cascade)
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+//   name String
+//   content String 
+// }
+

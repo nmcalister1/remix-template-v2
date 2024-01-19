@@ -5,7 +5,6 @@ import {
   useLoaderData,
 } from "@remix-run/react";
 import { z } from "zod";
-import NavBar from "~/components/navbar";
 import { db } from "~/utils/db.server";
 import { getUser } from "~/utils/session.server";
 

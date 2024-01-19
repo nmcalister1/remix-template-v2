@@ -1,10 +1,21 @@
-import type { ActionFunctionArgs } from "@remix-run/node";
-import { Form, Link, json, useActionData, useSearchParams } from "@remix-run/react";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import { Form, Link, json, redirect, useActionData, useSearchParams } from "@remix-run/react";
 import { HTMLAttributes } from "react";
 import { z } from "zod";
 
 import { db } from "~/utils/db.server";
-import { createUserSession, login, register } from "~/utils/session.server";
+import { createUserSession, getUserId, login, register } from "~/utils/session.server";
+
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const userId = await getUserId(request);
+
+  if (userId) {
+    throw redirect("/")
+  }
+
+  return json({})
+}
+
 
 function validateUrl(url: string) {
     const urls = ["/jokes", "/", "https://remix.run"];
@@ -26,7 +37,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     const formPayload = Object.fromEntries(await request.formData())
     console.log("FormPayload: ", formPayload)
     const redirectTo = validateUrl(
-        (formPayload.redirectTo as string) || "/jokes"
+        (formPayload.redirectTo as string) || "/"
     )
     const loginType = formPayload.loginType
     const userSchema = z.object({
@@ -80,7 +91,7 @@ export default function Login() {
     const actionData = useActionData<typeof action>()
   const [searchParams] = useSearchParams();
   return (
-    <div className="bg-rose-600 m-auto h-screen p-5">
+    <div className="bg-rose-700 m-auto h-screen p-5">
       <div data-light="">
         <h1 className="flex justify-center text-5xl p-3 pb-4 font-bold text-stone-100 drop-shadow-2xl">Login</h1>
         <Form method="post">
@@ -173,22 +184,32 @@ export default function Login() {
             ) : null}
           </div>
           <div className="flex justify-center">
-          <button type="submit"  className="bg-rose-800 hover:bg-rose-700 text-white font-bold p-1 w-1/4 mt-9 rounded-full">
+          <button type="submit"  className="bg-rose-900 hover:bg-rose-800 text-white font-bold p-1 w-1/4 mt-9 rounded-full">
             Submit
           </button>
           </div>
         </Form>
       </div>
-      <div className="flex justify-center bg-rose-600">
+      <div className="flex justify-center bg-rose-700">
         <ul className="flex justify-center p-3">
           <li className="p-4 mx-2">
-            <Link to="/" className="text-stone-100">Home</Link>
+            <Link to="/" className="text-stone-100 underline decoration-white hover:text-stone-200">Home</Link>
           </li>
           <li className="p-4 mx-2">
-            <Link to="/jokes" className="text-stone-100">Jokes</Link>
+            <Link to="/jokes" className="text-stone-100 underline decoration-white hover:text-stone-200">Friends</Link>
           </li>
         </ul>
       </div>
     </div>
   );
+}
+
+export function ErrorBoundary(){
+    return (
+      <div className="bg-rose-700 m-auto h-screen p-5">
+        <p className="text-stone-100 text-3xl font-semibold flex justify-center p-5 drop-shadow-sm">You are already signed in. Make sure to logout before signing in or registering a new account.</p>
+        <Link to="/" prefetch="intent" className="bg-rose-500 hover:bg-rose-700 text-white font-bold py-2 px-4 m-4 rounded drop-shadow-lg flex justify-center">Home</Link>
+      </div>
+    )
+ 
 }

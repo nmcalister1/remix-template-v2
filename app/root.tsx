@@ -1,12 +1,29 @@
-import { LinksFunction } from "@remix-run/node";
-import { Links, LiveReload, Meta, Outlet, Scripts, isRouteErrorResponse, useRouteError } from "@remix-run/react";
+import { LinksFunction, LoaderFunctionArgs, json, redirect } from "@remix-run/node";
+import { Links, LiveReload, Meta, Outlet, Scripts, isRouteErrorResponse, useLoaderData, useRouteError } from "@remix-run/react";
 import { PropsWithChildren } from "react";
 import stylesheet from "~/tailwind.css";
 import NavBar from "./components/navbar";
+import { getUserId } from "./utils/session.server";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
 ];
+
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const userId = await getUserId(request)
+
+  try {
+    if (!userId){
+      return json({ isLoggedIn: false })
+    } else {
+      return json({ isLoggedIn: true })
+    }
+  } catch (e){
+    console.error("page not found", e)
+    return json({})
+  }
+}
+
 
 function Document({
   children,
@@ -34,9 +51,10 @@ function Document({
 }
 
 export default function App() {
+  const data = useLoaderData<typeof loader>()
   return (
     <Document>
-      <NavBar />
+      <NavBar data={data} />
       <Outlet />
     </Document>
   );

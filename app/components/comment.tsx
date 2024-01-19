@@ -15,7 +15,7 @@ export function Comment(){
                     <p className="font-light text-xs md:text-base inline sm:hidden">1 hr ago</p>
                     
                     <div className="md:ml-7 p-2">
-                     <p className="font-medium text-sm md:text-base drop-shadow-sm"><Link to="/login" className="text-rose-600 hover:text-rose-400">@nmcalister<span>&nbsp;</span></Link>I like pizza because it can be customized well and because it tastes oh so very good! asdf adsf asdf adsf sadf adsf asdf dsaf asdf asdf sdaf adsf sadf sadf sadf adsf sadf sdaf sadf adsf adsf asf dsaf sadf asdf asdf asd fads adsf adsf adsf dsaf sad fsad fads fsd  dsf  sdaf  dsaf asd f asdf asd f adsf  adsf  adsf  dsaf sad f ads f sd af a dsf   adsf  dsa fdasf sd fds af adsf ds fs f saf sd fsda</p>
+                     <p className="font-medium text-sm md:text-base"><Link to="/login" className="text-rose-600 hover:text-rose-400">@nmcalister<span>&nbsp;</span></Link>I like pizza because it can be customized well and because it tastes oh so very good! asdf adsf asdf adsf sadf adsf asdf dsaf asdf asdf sdaf adsf sadf sadf sadf adsf sadf sdaf sadf adsf adsf asf dsaf sadf asdf asdf asd fads adsf adsf adsf dsaf sad fsad fads fsd  dsf  sdaf  dsaf asd f asdf asd f adsf  adsf  adsf  dsaf sad f ads f sd af a dsf   adsf  dsa fdasf sd fds af adsf ds fs f saf sd fsda</p>
                     </div>
                 </div>
                 <div className="flex md:justify-end p-2 rounded-br rounded-bl rounded-tr-none rounded-tl-none">

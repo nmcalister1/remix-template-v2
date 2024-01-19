@@ -4,13 +4,20 @@ import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { Link } from '@remix-run/react'
 import logo from '~/images/logo3.png'
 import classNames from 'classnames'
+import { IsLoggedIn } from './isLoggedIn'
 
 const navigation = [
   { name: 'Home', to: '/', current: true },
-  { name: 'Friends', to: '/login', current: false },
+  { name: 'Friends', to: '/friends', current: false },
 ]
 
-export default function NavBar() {
+type DataParameter = {
+  data: {
+    isLoggedIn: boolean
+  }
+}
+
+export default function NavBar({ data }: DataParameter) {
   return (
     <Disclosure as="nav" className="bg-stone-800">
       {({ open }) => (
@@ -43,6 +50,7 @@ export default function NavBar() {
                       <Link
                         key={item.name}
                         to={item.to}
+                        prefetch='intent'
                         className={classNames(
                           item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
                           'rounded-md px-3 py-2 text-sm font-medium'
@@ -91,7 +99,7 @@ export default function NavBar() {
                       <Menu.Item>
                         {({ active }) => (
                           <Link
-                            to="/login"
+                            to="/profile"
                             className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
                           >
                             Your Profile
@@ -101,7 +109,7 @@ export default function NavBar() {
                       <Menu.Item>
                         {({ active }) => (
                           <Link
-                            to="/login"
+                            to="/settings"
                             className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
                           >
                             Settings
@@ -109,13 +117,13 @@ export default function NavBar() {
                         )}
                       </Menu.Item>
                       <Menu.Item>
-                        {({ active }) => (
+                      {({ active }) => (
                           <Link
-                            to="/login"
-                            className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
-                          >
-                            Sign out
-                          </Link>
+                          to={data?.isLoggedIn ? "/logout" : "/login"}
+                          className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
+                        >
+                            {data?.isLoggedIn ? "Logout" : "Sign In"}
+                        </Link>
                         )}
                       </Menu.Item>
                     </Menu.Items>
