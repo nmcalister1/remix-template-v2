@@ -1,11 +1,16 @@
 import { ActionFunctionArgs, LoaderFunctionArgs, json, redirect } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { Form, Link, useLoaderData } from "@remix-run/react";
+import { format } from "date-fns";
+import { useState } from "react";
 import { z } from "zod";
 import { AnswerForm } from "~/components/answerForm";
 import { Avatars } from "~/components/avatars";
-import { Posts } from "~/components/posts";
+import { Comment } from "~/components/comment";
+import { CommentReplyForm } from "~/components/commentReplyForm";
+import { ProfilePic } from "~/components/pfp";
+import { ArrowDownIcon } from "~/icons/arrowDown";
 import { db } from "~/utils/db.server";
-import { getUser, getUserId, requireUserId, requireUserUsername } from "~/utils/session.server";
+import { getUser, getUserId, requireUserId } from "~/utils/session.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userId = await getUserId(request)
@@ -18,17 +23,34 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   })
 
   const postsSchema = z.object({
-    id: z.string(),
+    postId: z.string(),
     posterUsername: z.string(),
     content: z.string(),
     createdAt: z.date(),
+    posterProfilePicture: z.string()
+  })
+
+  const commentsList = await db.comment.findMany({
+    orderBy: { createdAt: "desc" },
+  })
+
+  const commentsSchema = z.object({
+    commentId: z.string(),
+    commentsPostId: z.string(),
+    commenterUsername: z.string(),
+    content: z.string(),
+    createdAt: z.date(),
+    commenterProfilePicture: z.string()
   })
 
   try {
     const postListItems = postsList.map((post) => ({
       ...postsSchema.parse(post)
     }))
-    return json({ postListItems, user })
+    const commentListItems = commentsList.map((comment) => ({
+      ...commentsSchema.parse(comment)
+    }))
+    return json({ postListItems, commentListItems, user })
   } catch (e){
     console.error("there was an error fetching post data", e)
     return redirect('/')
@@ -41,40 +63,78 @@ export const action = async({ request }: ActionFunctionArgs) => {
   const userId = await requireUserId(request)
   const user = await getUser(request)
   const formPayload = Object.fromEntries(await request.formData())
-  const postSchema = z.object({
-    content: z.string().min(1, { message: "Must be more than 0 characters" }),
-  })
-  const newPost = postSchema.safeParse(formPayload)
-  console.log("New Post: ", newPost)
+  const postId = formPayload.postId 
+  console.log(formPayload)
+  if (formPayload.content){
+    const postSchema = z.object({
+      content: z.string().min(1, { message: "Must be more than 0 characters" }),
+    })
+    const newPost = postSchema.safeParse(formPayload)
+    console.log("New Post: ", newPost)
 
-  if (!newPost.success){
-    const errors: FieldErrors = {}
-    newPost.error.issues.forEach(issue => {
-        const path = issue.path.join(".")
-        errors[path] = issue.message
+    if (!newPost.success){
+      const errors: FieldErrors = {}
+      newPost.error.issues.forEach(issue => {
+          const path = issue.path.join(".")
+          errors[path] = issue.message
+      })
+      return json({ errors, data: formPayload }, { status: 400 })
+    } else {
+          
+        const post = await db.post.create({
+          data: { ...newPost.data, posterId: userId, posterUsername: user.username, posterProfilePicture: user?.profilePicture }
+        })
+        const updateUser = await db.user.update({
+          where: {
+            id: userId
+          }, 
+          data: {
+            hasAnsweredQuestion: true
+    
+          }
+        })
+        return redirect("/")     
+    }
+  } else if (formPayload.comment){
+    const commentSchema = z.object({
+      comment: z.string().min(1, { message: "Must be more than 0 characters" }),
+      postId: z.string(),
     })
-    return json({ errors, data: formPayload }, { status: 400 })
-  } else {
-    const post = await db.post.create({
-      data: { ...newPost.data, posterId: userId, posterUsername: user?.username }
-    })
-    const updateUser = await db.user.update({
-      where: {
-        id: userId
-      }, 
-      data: {
-        hasAnsweredQuestion: true
+    const newComment = commentSchema.safeParse(formPayload)
+    console.log("New Post: ", newComment)
 
-      }
-    })
-    return redirect("/")
+    if (!newComment.success){
+      const errors: FieldErrors = {}
+      newComment.error.issues.forEach(issue => {
+          const path = issue.path.join(".")
+          errors[path] = issue.message
+      })
+      return json({ errors, data: formPayload }, { status: 400 })
+    } else {
+          const comment = await db.comment.create({
+            data: { content: newComment.data.comment, commenterId: userId, commenterUsername: user.username, commenterProfilePicture: user?.profilePicture, commentsPostId: newComment.data.postId }
+          })
+          
+          return null
+    }
   }
-
 }
+
+
 
 
 export default function IndexRoute(){
   const data = useLoaderData<typeof loader>()
+  const [selectedPostId, setSelectedPostId] = useState("")
+  const [isReplying, setIsReplying] = useState(false)
+  const [isReplyingComments, setIsReplyingComments] = useState(false)
+  const [selectedReplyPostId, setSelectedReplyPostId] = useState("")
+
+  const toggleArrow = (postId: string) => {
+    setIsReplying(false);
+    setSelectedPostId((prevId) => (prevId === postId ? "" : postId));
+  }
+
   return (
     <div>
       <div className="bg-rose-500 p-6">
@@ -89,8 +149,70 @@ export default function IndexRoute(){
           <div className="bg-stone-100 p-2 rounded">
             <Avatars />
           </div>
-          {data.postListItems.map(({ id, posterUsername, content, createdAt }) => (
-            <Posts key={id} username={posterUsername} content={content} createdAt={createdAt} />
+          {data.postListItems.map(({ postId, posterUsername, content, createdAt, posterProfilePicture }) => (
+            <div key={postId}>
+              <div className="drop-shadow-2xl">
+              <div className="bg-stone-100 p-2 rounded-tr rounded-tl rounded-br-none rounded-bl-none mt-6 md:flex shadow-lg">
+                  
+                  <ProfilePic classes="p-2 w-16 h-16 md:w-36 md:h-36 rounded-full drop-shadow-lg" source={posterProfilePicture} />
+                  <Link to="/login" className="font-light hover:text-rose-500 text-xs md:text-base inline sm:hidden ml-2">{posterUsername}</Link>
+                  <span className="font-light text-xs md:text-base inline sm:hidden">&nbsp;-&nbsp;</span>
+                  <p className="font-light text-xs md:text-base inline sm:hidden">posted at {format(createdAt, 'h:mm a')}</p>
+                  
+                  <div className="md:ml-7 p-2">
+                  <p className="font-medium text-stone-800 text-xl">{content}</p>
+                  </div>
+              </div>
+              <div className="flex md:justify-end bg-stone-100 p-2 rounded-br rounded-bl rounded-tr-none rounded-tl-none">
+                  <Link to="/login" className="font-light hover:text-rose-500 text-xs md:text-base hidden md:inline mt-1">{posterUsername}</Link>
+                  <span className="font-light text-xs md:text-base hidden md:inline mt-1">&nbsp;-&nbsp;</span>
+                  <p className="font-light text-xs md:text-base hidden md:inline mt-1">posted at {format(createdAt, 'h:mm a')}</p>
+                  <span className="hidden md:inline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                  <span className="inline ml-28 w-auto md:hidden"></span>
+                  <button onClick={() => {
+                      setIsReplying(true)
+                      setSelectedReplyPostId(postId)
+                      }} className="bg-rose-500 hover:bg-rose-700 text-white font-bold p-1 rounded text-sm md:text-base m-auto md:m-0 md:mr-4 drop-shadow-lg">Reply</button>
+              </div>
+              </div>
+
+              <div className="flex justify-center">
+                  <button onClick={() => toggleArrow(postId)} className="flex items-center justify-center bg-rose-600 hover:bg-rose-900 text-white font-bold p-1 rounded text-sm md:text-base w-screen shadow-sm">
+                  {data.commentListItems.filter(comment => comment.commentsPostId === postId).length} Comment{data.commentListItems.filter(comment => comment.commentsPostId === postId).length !== 1 && 's'}{<ArrowDownIcon />}</button>
+              </div>
+
+            {selectedPostId === postId && !isReplying &&
+                
+                data.commentListItems.map(({ commentId, commentsPostId, commenterUsername, content, createdAt, commenterProfilePicture }) => (
+                  commentsPostId === selectedPostId ? (
+                    <div key={commentId} className="shadow-2xl w-5/6 m-auto bg-stone-200 p-1 rounded-lg">
+                      <Comment commenterUsername={commenterUsername} content={content} createdAt={createdAt} commenterProfilePicture={commenterProfilePicture} posterUsername={posterUsername} setIsReplyingComments={setIsReplyingComments} />
+                    {isReplyingComments ? (
+                        <CommentReplyForm setIsReplyingComments={setIsReplyingComments} />
+                    ) : null}
+                  
+                    </div> ) : null
+                  
+                ))
+                
+              }
+            
+
+
+            {selectedReplyPostId === postId && isReplying ? (
+                <Form method="post" onSubmit={() => setIsReplying(false)}>
+                    <div className="flex justify-center items-center px-2 py-1">
+                        <textarea name="comment" id="commentForm" className="md:resize-none boder-solid border-2 outline-none border-black rounded-md p-4 w-screen text-black hover:border-rose-300 focus:border-rose-300" rows={4} placeholder="Reply... "></textarea>
+                        <input type="hidden" name="postId" value={postId} />
+                    </div>
+                    <div className="flex flex-col items-end px-2">
+                        <button type="submit" className="bg-rose-500 hover:bg-rose-700 text-white font-bold py-2 px-4 rounded drop-shadow-lg">
+                        Submit
+                        </button>
+                    </div>
+                </Form>
+            ) : null}
+          </div>
           ))}
         </div>
         ) : (

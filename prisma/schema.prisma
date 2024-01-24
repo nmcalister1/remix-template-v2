@@ -17,26 +17,35 @@ model User {
   username String @unique
   passwordHash String
   hasAnsweredQuestion Boolean
+  profilePicture String?
   posts Post[]
+  comments Comment[]
 }
 
 model Post {
-  id String @id @default(uuid())
+  postId String @id @default(uuid())
   posterId String
   posterUsername String
+  posterProfilePicture String?
   poster User @relation(fields: [posterId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  content String
+  comment Comment[]
+}
+
+model Comment {
+  commentId String @id @default(uuid())
+  commenterId String
+  commenterUsername String
+  commenterProfilePicture String?
+  commenter User @relation(fields: [commenterId], references: [id], onDelete: Cascade)
+  commentsPostId String  
+  commentsPost Post @relation(fields: [commentsPostId], references: [postId], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   content String
 }
 
-// model Joke {
-//   id String @id @default(uuid())
-//   jokesterId String
-//   jokester User @relation(fields: [jokesterId], references: [id], onDelete: Cascade)
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-//   name String
-//   content String 
-// }
+
 

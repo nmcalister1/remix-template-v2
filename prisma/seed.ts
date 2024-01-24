@@ -1,23 +1,72 @@
 import { PrismaClient } from "@prisma/client";
 const db = new PrismaClient()
 
-async function seed(){
+// async function seed(){
+//     const kody = await db.user.create({
+//       data: {
+//         username: "kody",
+//         passwordHash: "$2b$10$K7L1OJ45/4Y2nIvhRVpCe.FSmhDdWoXehVzJptJ/op0lSsvqNu/1u",
+//         hasAnsweredQuestion: false,
+//         profilePicture: process.env.BASE_BG_IMAGE
+//       }
+//     })
+//     await Promise.all(
+//         [...getPosts().map((post) => {
+//             const data = { posterId: kody.id, posterUsername: kody.username, posterProfilePicture: kody.profilePicture, ...post }
+//             return db.post.create({ data })
+//         }),
+//         ...getComments().map((comment) => {
+//             const data = { commenterId: kody.id, commenterUsername: kody.username, commenterProfilePicture: kody.profilePicture, ...comment }
+//             return db.comment.create({ data })
+//         })]
+//     )
+// }
+
+// seed()
+
+interface Post {
+  postId: string;
+  posterId: string;
+  posterUsername: string;
+  posterProfilePicture: string | null;
+  createdAt: Date
+  updatedAt: Date
+  content: string;
+}
+
+
+
+async function seed() {
+  
     const kody = await db.user.create({
       data: {
         username: "kody",
         passwordHash: "$2b$10$K7L1OJ45/4Y2nIvhRVpCe.FSmhDdWoXehVzJptJ/op0lSsvqNu/1u",
         hasAnsweredQuestion: false,
-      }
-    })
+        profilePicture: process.env.BASE_BG_IMAGE,
+      },
+    });
+
+    const posts: Post[] = await Promise.all(
+      getPosts().map((post) => {
+        const data = { posterId: kody.id, posterUsername: kody.username, posterProfilePicture: kody.profilePicture, ...post };
+        return db.post.create({ data });
+      })
+    );
+    
+    const commentsData = getComments(posts)
+
     await Promise.all(
-        getPosts().map((post) => {
-            const data = { posterId: kody.id, posterUsername: kody.username, ...post }
-            return db.post.create({ data })
-        })
-    )
+      commentsData.map((comment) => {
+        const data = { commenterId: kody.id, commenterUsername: kody.username, commenterProfilePicture: kody.profilePicture, ...comment };
+        return db.comment.create({ data });
+      })
+    );
+
 }
 
-seed()
+seed();
+
 
 function getPosts(){
   return [
@@ -30,35 +79,26 @@ function getPosts(){
   ]
 }
 
-// function getJokes(){
-//     return [
-//         {
-//             name: "Road worker",
-//             content: `I never wanted to believe that my Dad was stealing from his job as a road worker. But when I got home, all the signs were there.`,
-//           },
-//           {
-//             name: "Frisbee",
-//             content: `I was wondering why the frisbee was getting bigger, then it hit me.`,
-//           },
-//           {
-//             name: "Trees",
-//             content: `Why do trees seem suspicious on sunny days? Dunno, they're just a bit shady.`,
-//           },
-//           {
-//             name: "Skeletons",
-//             content: `Why don't skeletons ride roller coasters? They don't have the stomach for it.`,
-//           },
-//           {
-//             name: "Hippos",
-//             content: `Why don't you find hippopotamuses hiding in trees? They're really good at it.`,
-//           },
-//           {
-//             name: "Dinner",
-//             content: `What did one plate say to the other plate? Dinner is on me!`,
-//           },
-//           {
-//             name: "Elevator",
-//             content: `My first time using an elevator was an uplifting experience. The second time let me down.`,
-//           },
-//     ]
+function getComments(posts: Post[]) {
+  return [
+    {
+      commentsPostId: posts[0].postId, // Associate comment with the first post
+      content: "Comment related to the first post",
+    },
+    {
+      commentsPostId: posts[1].postId, // Associate comment with the second post
+      content: "Comment related to the second post",
+    },
+    // Add more comments as needed
+  ];
+}
+// function getComments(){
+//   return [
+//     {
+//       content: "I never wanted to believe that my Dad was stealing from his job as a road worker. But when I got home, all the signs were there."
+//     },
+//     {
+//       content: "My first time using an elevator was an uplifting experience. The second time let me down."
+//     }
+//   ]
 // }

@@ -4,7 +4,7 @@ import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { Link } from '@remix-run/react'
 import logo from '~/images/logo3.png'
 import classNames from 'classnames'
-import { IsLoggedIn } from './isLoggedIn'
+import pfp from "~/images/pfp3.jpg"
 
 const navigation = [
   { name: 'Home', to: '/', current: true },
@@ -81,7 +81,7 @@ export default function NavBar({ data }: DataParameter) {
                       <span className="sr-only">Open user menu</span>
                       <img
                         className="h-8 w-8 rounded-full"
-                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                        src={data?.user?.profilePicture || pfp }
                         alt=""
                       />
                     </Menu.Button>

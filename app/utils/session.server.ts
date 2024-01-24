@@ -10,7 +10,7 @@ type LoginForm = {
 export async function register({ username, password }: LoginForm){
     const passwordHash = await bcrypt.hash(password, 10)
     const user = await db.user.create({
-        data: { passwordHash, username }
+        data: { passwordHash, username, profilePicture: process.env.BASE_BG_IMAGE }
     })
 
     return { id: user.id, username }
@@ -53,15 +53,6 @@ function getUserSession(request: Request){
     return storage.getSession(request.headers.get("Cookie"))
 }
 
-export async function getUserId(request: Request){
-    const session = await getUserSession(request)
-    const userId = session.get("userId")
-    if (!userId || typeof userId !== "string"){
-        return null
-    }
-    return userId
-}
-
 export async function requireUserId( request: Request, redirectTo: string = new URL(request.url).pathname){
     const session = await getUserSession(request)
     const userId = session.get("userId")
@@ -74,6 +65,17 @@ export async function requireUserId( request: Request, redirectTo: string = new 
     return userId
 }
 
+
+export async function getUserId(request: Request){
+    const session = await getUserSession(request)
+    const userId = session.get("userId")
+    if (!userId || typeof userId !== "string"){
+        return null
+    }
+    return userId
+}
+
+
 export async function getUser(request: Request){
     const userId = await getUserId(request)
     if (typeof userId !== "string"){
@@ -81,8 +83,24 @@ export async function getUser(request: Request){
     }
 
     const user = await db.user.findUnique({
-        select: { id: true, username: true, hasAnsweredQuestion: true, },
         where: { id: userId }
+    })
+
+    if (!user) {
+        throw await logout(request)
+    }
+
+    return user
+}
+
+export async function getPost(request: Request){
+    const userId = await getUserId(request)
+    if (typeof userId !== "string"){
+        return null
+    }
+
+    const post = await db.post.findUnique({
+        where: { posterId: userId }
     })
 
     if (!user) {

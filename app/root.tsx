@@ -3,7 +3,7 @@ import { Links, LiveReload, Meta, Outlet, Scripts, isRouteErrorResponse, useLoad
 import { PropsWithChildren } from "react";
 import stylesheet from "~/tailwind.css";
 import NavBar from "./components/navbar";
-import { getUserId } from "./utils/session.server";
+import { getUser, getUserId } from "./utils/session.server";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
@@ -11,12 +11,13 @@ export const links: LinksFunction = () => [
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userId = await getUserId(request)
+  const user = await getUser(request)
 
   try {
     if (!userId){
       return json({ isLoggedIn: false })
     } else {
-      return json({ isLoggedIn: true })
+      return json({ isLoggedIn: true, user })
     }
   } catch (e){
     console.error("page not found", e)
