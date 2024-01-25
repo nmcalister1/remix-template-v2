@@ -41,8 +41,8 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     )
     const loginType = formPayload.loginType
     const userSchema = z.object({
-        username: z.string().min(3, { message: "Username must be more than 2 characters" }),
-        password: z.string().min(6, { message: "Password must be more than 6 characters long" }),
+        username: z.string().min(3, { message: "*Username must be more than 2 characters" }),
+        password: z.string().min(6, { message: "*Password must be more than 6 characters long" }),
     })
     const newUser = userSchema.safeParse(formPayload)
     console.log("NewUser: ", newUser)
@@ -146,6 +146,7 @@ export default function Login() {
                 <p
                     role="alert"
                     id="username-error"
+                    className="flex justify-center text-black font-bold"
                 >
                     {actionData.errors.username}
                 </p>
@@ -164,12 +165,13 @@ export default function Login() {
             />
             </div>
             <ErrorMessage>
-                {actionData?.errors?.passwordHash ? (
+                {actionData?.errors?.password ? (
                 <p
                     role="alert"
                     id="password-error"
+                    className="flex justify-center text-black font-bold"
                 >
-                    {actionData.errors.passwordHash}
+                    {actionData.errors.password}
                 </p>
                 ) : null}
             </ErrorMessage>
@@ -178,6 +180,7 @@ export default function Login() {
             {actionData?.data?.error ? (
               <p
                 role="alert"
+                className="flex justify-center text-black font-bold"
               >
                 {actionData?.data?.error}
               </p>
@@ -204,12 +207,12 @@ export default function Login() {
   );
 }
 
-export function ErrorBoundary(){
-    return (
-      <div className="bg-rose-700 m-auto h-screen p-5">
-        <p className="text-stone-100 text-3xl font-semibold flex justify-center p-5 drop-shadow-sm">You are already signed in. Make sure to logout before signing in or registering a new account.</p>
-        <Link to="/" prefetch="intent" className="bg-rose-500 hover:bg-rose-700 text-white font-bold py-2 px-4 m-4 rounded drop-shadow-lg flex justify-center">Home</Link>
-      </div>
-    )
+// export function ErrorBoundary(){
+//     return (
+//       <div className="bg-rose-700 m-auto h-screen p-5">
+//         <p className="text-stone-100 text-3xl font-semibold flex justify-center p-5 drop-shadow-sm">You are already signed in. Make sure to logout before signing in or registering a new account.</p>
+//         <Link to="/" prefetch="intent" className="bg-rose-500 hover:bg-rose-700 text-white font-bold py-2 px-4 m-4 rounded drop-shadow-lg flex justify-center">Home</Link>
+//       </div>
+//     )
  
-}
+// }

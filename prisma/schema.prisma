@@ -20,6 +20,8 @@ model User {
   profilePicture String?
   posts Post[]
   comments Comment[]
+  replies Reply[]
+  repliess Replies[]
 }
 
 model Post {
@@ -42,6 +44,36 @@ model Comment {
   commenter User @relation(fields: [commenterId], references: [id], onDelete: Cascade)
   commentsPostId String  
   commentsPost Post @relation(fields: [commentsPostId], references: [postId], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  content String
+  reply Reply[]
+}
+
+model Reply {
+  replyId String @id @default(uuid())
+  replyerId String
+  replyerUsername String
+  replyerProfilePicture String?
+  replyer User @relation(fields: [replyerId], references: [id], onDelete: Cascade)
+  replysCommentId String  
+  replysCommentUsername String
+  replysComment Comment @relation(fields: [replysCommentId], references: [commentId], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  content String
+  replies Replies[]
+}
+
+model Replies {
+  replyToReplyId String @id @default(uuid())
+  replyToReplyerId String
+  replyToReplyerUsername String
+  replyToReplyerProfilePicture String?
+  replyToReplyer User @relation(fields: [replyToReplyerId], references: [id], onDelete: Cascade)
+  replyToReplysReplyId String  
+  replyToReplysReplyUsername String
+  replyToReplysReply Reply @relation(fields: [replyToReplysReplyId], references: [replyId], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   content String

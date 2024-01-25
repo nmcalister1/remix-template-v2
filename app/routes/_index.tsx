@@ -5,8 +5,8 @@ import { useState } from "react";
 import { z } from "zod";
 import { AnswerForm } from "~/components/answerForm";
 import { Avatars } from "~/components/avatars";
-import { Comment } from "~/components/comment";
 import { CommentReplyForm } from "~/components/commentReplyForm";
+import { CommentsReplyForm } from "~/components/commentsReplyForm";
 import { ProfilePic } from "~/components/pfp";
 import { ArrowDownIcon } from "~/icons/arrowDown";
 import { db } from "~/utils/db.server";
@@ -43,6 +43,34 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     commenterProfilePicture: z.string()
   })
 
+  const replyList = await db.reply.findMany({
+    orderBy: { createdAt: "desc" },
+  })
+
+  const replySchema = z.object({
+    replyId: z.string(),
+    replysCommentId: z.string(),
+    replyerUsername: z.string(),
+    content: z.string(),
+    createdAt: z.date(),
+    replyerProfilePicture: z.string(),
+    replysCommentUsername: z.string(),
+  })
+
+  const replyToReplyList = await db.replies.findMany({
+    orderBy: { createdAt: "desc" },
+  })
+
+  const replyToReplySchema = z.object({
+    replyToReplyId: z.string(),
+    replyToReplysReplyId: z.string(),
+    replyToReplyerUsername: z.string(),
+    content: z.string(),
+    createdAt: z.date(),
+    replyToReplyerProfilePicture: z.string(),
+    replyToReplysReplyUsername: z.string(),
+  })
+
   try {
     const postListItems = postsList.map((post) => ({
       ...postsSchema.parse(post)
@@ -50,7 +78,13 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     const commentListItems = commentsList.map((comment) => ({
       ...commentsSchema.parse(comment)
     }))
-    return json({ postListItems, commentListItems, user })
+    const replyListItems = replyList.map((reply) => ({
+      ...replySchema.parse(reply)
+    }))
+    const replyToReplyListItems = replyToReplyList.map((replyToReply) => ({
+      ...replyToReplySchema.parse(replyToReply)
+    }))
+    return json({ postListItems, commentListItems, replyListItems, replyToReplyListItems, user })
   } catch (e){
     console.error("there was an error fetching post data", e)
     return redirect('/')
@@ -63,8 +97,6 @@ export const action = async({ request }: ActionFunctionArgs) => {
   const userId = await requireUserId(request)
   const user = await getUser(request)
   const formPayload = Object.fromEntries(await request.formData())
-  const postId = formPayload.postId 
-  console.log(formPayload)
   if (formPayload.content){
     const postSchema = z.object({
       content: z.string().min(1, { message: "Must be more than 0 characters" }),
@@ -117,6 +149,52 @@ export const action = async({ request }: ActionFunctionArgs) => {
           
           return null
     }
+  } else if (formPayload.reply){
+    const replySchema = z.object({
+      reply: z.string().min(1, { message: "Must be more than 0 characters" }),
+      commentId: z.string(),
+      commentUsername: z.string(),
+    })
+    const newReply = replySchema.safeParse(formPayload)
+    console.log("New Post: ", newReply)
+
+    if (!newReply.success){
+      const errors: FieldErrors = {}
+      newReply.error.issues.forEach(issue => {
+          const path = issue.path.join(".")
+          errors[path] = issue.message
+      })
+      return json({ errors, data: formPayload }, { status: 400 })
+    } else {
+          const reply = await db.reply.create({
+            data: { content: newReply.data.reply, replyerId: userId, replyerUsername: user.username, replyerProfilePicture: user?.profilePicture, replysCommentId: newReply.data.commentId, replysCommentUsername: newReply.data.commentUsername }
+          })
+          
+          return null
+    }
+  } else if (formPayload.replyToReply){
+    const replySchema = z.object({
+      replyToReply: z.string().min(1, { message: "Must be more than 0 characters" }),
+      replyId: z.string(),
+      replyUsername: z.string(),
+    })
+    const newReply = replySchema.safeParse(formPayload)
+    console.log("New Post: ", newReply)
+
+    if (!newReply.success){
+      const errors: FieldErrors = {}
+      newReply.error.issues.forEach(issue => {
+          const path = issue.path.join(".")
+          errors[path] = issue.message
+      })
+      return json({ errors, data: formPayload }, { status: 400 })
+    } else {
+          const replyToReply = await db.replies.create({
+            data: { content: newReply.data.replyToReply, replyToReplyerId: userId, replyToReplyerUsername: user.username, replyToReplyerProfilePicture: user?.profilePicture, replyToReplysReplyId: newReply.data.replyId, replyToReplysReplyUsername: newReply.data.replyUsername }
+          })
+          
+          return null
+    }
   }
 }
 
@@ -128,11 +206,27 @@ export default function IndexRoute(){
   const [selectedPostId, setSelectedPostId] = useState("")
   const [isReplying, setIsReplying] = useState(false)
   const [isReplyingComments, setIsReplyingComments] = useState(false)
+  const [isReplyingReply, setIsReplyingReply] = useState(false)
   const [selectedReplyPostId, setSelectedReplyPostId] = useState("")
+  const [selectedCommentId, setSelectedCommentId] = useState("")
+  const [selectedReplyId, setSelectedReplyId] = useState("")
 
   const toggleArrow = (postId: string) => {
     setIsReplying(false);
     setSelectedPostId((prevId) => (prevId === postId ? "" : postId));
+  }
+
+  const toggleReplyingComments = (commentId: string) => {
+    setIsReplyingComments(true);
+    setSelectedCommentId((prevId) => (prevId === commentId ? "" : commentId));
+  }
+  const toggleReplyingReplies = (replyId: string) => {
+    setIsReplyingReply(true);
+    setSelectedReplyId((prevId) => (prevId === replyId ? "" : replyId));
+  }
+  const toggleReplies = (replyToReplyId: string) => {
+    setIsReplyingReply(true);
+    setSelectedReplyId((prevId) => (prevId === replyToReplyId ? "" : replyToReplyId));
   }
 
   return (
@@ -186,31 +280,114 @@ export default function IndexRoute(){
                 data.commentListItems.map(({ commentId, commentsPostId, commenterUsername, content, createdAt, commenterProfilePicture }) => (
                   commentsPostId === selectedPostId ? (
                     <div key={commentId} className="shadow-2xl w-5/6 m-auto bg-stone-200 p-1 rounded-lg">
-                      <Comment commenterUsername={commenterUsername} content={content} createdAt={createdAt} commenterProfilePicture={commenterProfilePicture} posterUsername={posterUsername} setIsReplyingComments={setIsReplyingComments} />
-                    {isReplyingComments ? (
-                        <CommentReplyForm setIsReplyingComments={setIsReplyingComments} />
+                      <div className="p-2 rounded-tr rounded-tl rounded-br-none rounded-bl-none md:flex">
+                        
+                        <ProfilePic classes="p-2 w-16 h-16 md:w-36 md:h-36 rounded-full drop-shadow-lg" source={commenterProfilePicture} />
+                        <Link to="/login" className="font-light hover:text-rose-500 text-xs md:text-base inline sm:hidden ml-2">{commenterUsername}</Link>
+                        <span className="font-light text-xs md:text-base inline sm:hidden">&nbsp;-&nbsp;</span>
+                        <p className="font-light text-xs md:text-base inline sm:hidden">posted at {format(createdAt, 'h:mm a')}</p>
+                        
+                        <div className="md:ml-7 p-2">
+                        <p className="font-medium text-sm md:text-base"><Link to="/login" className="text-rose-600 hover:text-rose-400">@{posterUsername}<span>&nbsp;</span></Link>{content}</p>
+                        </div>
+                    </div>
+                    <div className="flex md:justify-end p-2 rounded-br rounded-bl rounded-tr-none rounded-tl-none">
+                        <Link to="/login" className="font-light hover:text-rose-500 text-xs md:text-base hidden md:inline mt-1">{commenterUsername}</Link>
+                        <span className="font-light text-xs md:text-base hidden md:inline mt-1">&nbsp;-&nbsp;</span>
+                        <p className="font-light text-xs md:text-base hidden md:inline mt-1">posted at {format(createdAt, 'h:mm a')}</p>
+                        <span className="hidden md:inline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <span className="inline ml-28 w-auto md:hidden"></span>
+              
+                        <button onClick={() => toggleReplyingComments(commentId)} className="bg-rose-500 hover:bg-rose-700 text-white font-bold p-1 rounded text-sm md:text-base md:mr-4 drop-shadow-lg">Reply</button>
+                        
+                    </div>
+                    {selectedCommentId === commentId && isReplyingComments ? (
+                        <CommentsReplyForm setIsReplyingComments={setIsReplyingComments} id={commentId} nameId="commentId" nameContent="reply" nameCommentName="commentUsername" commentName={commenterUsername} />
                     ) : null}
+
+
+                    {
+                        
+                        data.replyListItems.map(({ replyId, replysCommentId, replyerUsername, content, createdAt, replyerProfilePicture, replysCommentUsername }) => (
+                          ( replysCommentId === commentId ? 
+                            <div key={replyId} className="shadow-2xl w-5/6 m-auto bg-stone-200 p-1 rounded-lg">
+                              <div className="p-2 rounded-tr rounded-tl rounded-br-none rounded-bl-none md:flex">
+                                
+                                <ProfilePic classes="p-2 w-16 h-16 md:w-36 md:h-36 rounded-full drop-shadow-lg" source={replyerProfilePicture} />
+                                <Link to="/login" className="font-light hover:text-rose-500 text-xs md:text-base inline sm:hidden ml-2">{replyerUsername}</Link>
+                                <span className="font-light text-xs md:text-base inline sm:hidden">&nbsp;-&nbsp;</span>
+                                <p className="font-light text-xs md:text-base inline sm:hidden">posted at {format(createdAt, 'h:mm a')}</p>
+                                
+                                <div className="md:ml-7 p-2">
+                                <p className="font-medium text-sm md:text-base"><Link to="/login" className="text-rose-600 hover:text-rose-400">@{replysCommentUsername}<span>&nbsp;</span></Link>{content}</p>
+                                </div>
+                            </div>
+                            <div className="flex md:justify-end p-2 rounded-br rounded-bl rounded-tr-none rounded-tl-none">
+                                <Link to="/login" className="font-light hover:text-rose-500 text-xs md:text-base hidden md:inline mt-1">{replyerUsername}</Link>
+                                <span className="font-light text-xs md:text-base hidden md:inline mt-1">&nbsp;-&nbsp;</span>
+                                <p className="font-light text-xs md:text-base hidden md:inline mt-1">posted at {format(createdAt, 'h:mm a')}</p>
+                                <span className="hidden md:inline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                <span className="inline ml-28 w-auto md:hidden"></span>
+                      
+                                <button onClick={() => toggleReplyingReplies(replyId)} className="bg-rose-500 hover:bg-rose-700 text-white font-bold p-1 rounded text-sm md:text-base md:mr-4 drop-shadow-lg">Reply</button>
+                                
+                            </div>
+                            {selectedReplyId === replyId && isReplyingReply ? (
+                                <CommentsReplyForm setIsReplyingComments={setIsReplyingReply} id={replyId} nameId="replyId" nameContent="replyToReply" nameCommentName="replyUsername" commentName={replyerUsername} />
+                            ) : null}
+
+                            {
+                              
+                              data.replyToReplyListItems.map(({ replyToReplyId, replyToReplysReplyId, replyToReplyerUsername, content, createdAt, replyToReplyerProfilePicture, replyToReplysReplyUsername }) => (
+                                ( replyToReplysReplyId === replyId ? 
+                                  <div key={replyToReplyId} className="m-auto bg-stone-200 p-1 rounded-lg">
+                                    <div className="p-2 rounded-tr rounded-tl rounded-br-none rounded-bl-none md:flex">
+                                      
+                                      <ProfilePic classes="p-2 w-16 h-16 md:w-36 md:h-36 rounded-full drop-shadow-lg" source={replyToReplyerProfilePicture} />
+                                      <Link to="/login" className="font-light hover:text-rose-500 text-xs md:text-base inline sm:hidden ml-2">{replyToReplyerUsername}</Link>
+                                      <span className="font-light text-xs md:text-base inline sm:hidden">&nbsp;-&nbsp;</span>
+                                      <p className="font-light text-xs md:text-base inline sm:hidden">posted at {format(createdAt, 'h:mm a')}</p>
+                                      
+                                      <div className="md:ml-7 p-2">
+                                      <p className="font-medium text-sm md:text-base"><Link to="/login" className="text-rose-600 hover:text-rose-400">@{replyToReplysReplyUsername}<span>&nbsp;</span></Link>{content}</p>
+                                      </div>
+                                  </div>
+                                  <div className="flex md:justify-end p-2 rounded-br rounded-bl rounded-tr-none rounded-tl-none">
+                                      <Link to="/login" className="font-light hover:text-rose-500 text-xs md:text-base hidden md:inline mt-1">{replyToReplyerUsername}</Link>
+                                      <span className="font-light text-xs md:text-base hidden md:inline mt-1">&nbsp;-&nbsp;</span>
+                                      <p className="font-light text-xs md:text-base hidden md:inline mt-1">posted at {format(createdAt, 'h:mm a')}</p>
+                                      <span className="hidden md:inline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                      <span className="inline ml-28 w-auto md:hidden"></span>
+                            
+                                      <button onClick={() => toggleReplies(replyToReplyId)} className="bg-rose-500 hover:bg-rose-700 text-white font-bold p-1 rounded text-sm md:text-base md:mr-4 drop-shadow-lg">Reply</button>
+                                      
+                                  </div>
+                                  {selectedReplyId === replyToReplyId && isReplyingReply ? (
+                                    <CommentsReplyForm setIsReplyingComments={setIsReplyingReply} id={replyId} nameId="replyId" nameContent="replyToReply" nameCommentName="replyUsername" commentName={replyToReplyerUsername} />
+                                ) : null}
+                                
+                                  </div> : null)
+                                
+                              ))
+                              
+                            }
+                          
+                            </div> : null)
+                          
+                        ))
+                        
+                      }
+            
                   
                     </div> ) : null
                   
                 ))
                 
               }
-            
 
 
             {selectedReplyPostId === postId && isReplying ? (
-                <Form method="post" onSubmit={() => setIsReplying(false)}>
-                    <div className="flex justify-center items-center px-2 py-1">
-                        <textarea name="comment" id="commentForm" className="md:resize-none boder-solid border-2 outline-none border-black rounded-md p-4 w-screen text-black hover:border-rose-300 focus:border-rose-300" rows={4} placeholder="Reply... "></textarea>
-                        <input type="hidden" name="postId" value={postId} />
-                    </div>
-                    <div className="flex flex-col items-end px-2">
-                        <button type="submit" className="bg-rose-500 hover:bg-rose-700 text-white font-bold py-2 px-4 rounded drop-shadow-lg">
-                        Submit
-                        </button>
-                    </div>
-                </Form>
+                <CommentReplyForm onSubmitCallback={() => toggleArrow(postId)} id={postId} nameId="postId" nameContent="comment" />
             ) : null}
           </div>
           ))}
