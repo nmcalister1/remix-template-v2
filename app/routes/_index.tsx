@@ -88,6 +88,11 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       ...postsSchema.parse(post)
     }))
     const filteredPosts = postListItems.filter((postListItem) => user?.friends?.includes(postListItem.posterUsername));
+    const profilePictures = filteredPosts
+    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()) 
+    .slice(0, 4) 
+    .map(({ posterProfilePicture }) => posterProfilePicture)
+    
 
     const commentListItems = commentsList.map((comment) => ({
       ...commentsSchema.parse(comment)
@@ -99,7 +104,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       ...replyToReplySchema.parse(replyToReply)
     }))
     const questionItem = {...questionSchema.parse(question)}
-    return json({ filteredPosts, commentListItems, replyListItems, replyToReplyListItems, user, questionItem })
+    return json({ filteredPosts, profilePictures, commentListItems, replyListItems, replyToReplyListItems, user, questionItem })
   } catch (e){
     console.error("there was an error fetching post data", e)
     return redirect('/')
@@ -271,7 +276,7 @@ export default function IndexRoute(){
       {data?.user?.hasAnsweredQuestion ? (
         <div className="p-4">
           <div className="bg-stone-100 p-2 rounded">
-            <Avatars />
+            <Avatars profilePictures={data?.profilePictures} />
           </div>
           
           {data.filteredPosts.map(({ postId, posterUsername, content, createdAt, posterProfilePicture }) => (

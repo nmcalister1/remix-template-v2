@@ -1,6 +1,6 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { Form, Link, json, redirect, useActionData, useSearchParams } from "@remix-run/react";
-import { HTMLAttributes } from "react";
+import { HTMLAttributes, useState } from "react";
 import { z } from "zod";
 
 import { db } from "~/utils/db.server";
@@ -90,6 +90,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 export default function Login() {
     const actionData = useActionData<typeof action>()
   const [searchParams] = useSearchParams();
+  const [loginType, setLoginType] = useState('login');
+
+  const handleLoginTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setLoginType(event.target.value);
+  };
   return (
     <div className="bg-rose-700 m-auto h-screen p-5">
       <div data-light="">
@@ -115,6 +120,7 @@ export default function Login() {
                     !actionData?.data?.loginType ||
                     actionData?.data?.loginType === "login"
                 }
+                onChange={handleLoginTypeChange}
               />{" "}
               Login
             </label>
@@ -126,12 +132,15 @@ export default function Login() {
                 defaultChecked={
                     actionData?.data?.loginType === "register"
                 }
+                onChange={handleLoginTypeChange}
               />{" "}
               Register
             </label>
           </fieldset>
           <div>
             <label htmlFor="username-input" className="flex justify-center text-stone-100 font-medium drop-shadow-sm p-2">Username</label>
+            {/* show this text only if the register checkbox is checked */}
+            {loginType === 'register' && <p className="flex justify-center text-stone-100 font-light">&#40;*username cannot be changed after registration&#41;</p>}
             <div className="flex justify-center">
             <input
               type="text"

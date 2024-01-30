@@ -3,8 +3,14 @@ import { useLoaderData } from "@remix-run/react"
 import { z } from "zod"
 import { UserCircle } from "~/components/userCircle"
 import { db } from "~/utils/db.server"
+import { getUserId } from "~/utils/session.server"
 
-export const loader = async ({params }: LoaderFunctionArgs) => {
+export const loader = async ({params, request }: LoaderFunctionArgs) => {
+  const userId = await getUserId(request)
+  
+  if (!userId){
+    throw redirect("/login")
+  }
   const user = await db.user.findUnique({
     where: { username: params.profileUsername },
   });

@@ -106,7 +106,7 @@ export default function NavBar({ data }: DataParameter) {
                           </Link>
                         )}
                       </Menu.Item>
-                      <Menu.Item>
+                      {/* <Menu.Item>
                         {({ active }) => (
                           <Link
                             to="/settings"
@@ -115,7 +115,7 @@ export default function NavBar({ data }: DataParameter) {
                             Settings
                           </Link>
                         )}
-                      </Menu.Item>
+                      </Menu.Item> */}
                       <Menu.Item>
                       {({ active }) => (
                           <Link
