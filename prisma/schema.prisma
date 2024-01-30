@@ -18,10 +18,22 @@ model User {
   passwordHash String
   hasAnsweredQuestion Boolean
   profilePicture String?
+  fullname String?
+  age String?
+  description String?
+  friends String[] @default([])
   posts Post[]
   comments Comment[]
   replies Reply[]
   repliess Replies[]
+}
+
+model Friendrequest{
+  id String @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  senderUsername String
+  receiverUsername String
 }
 
 model Post {
@@ -77,6 +89,14 @@ model Replies {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   content String
+}
+
+model Question {
+  questionId String @id @default("1")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  question String
+  currentQuestionNumber Int
 }
 
 

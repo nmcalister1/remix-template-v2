@@ -137,7 +137,7 @@ export default function Login() {
               type="text"
               id="username-input"
               name="username"
-              className="border-solid border-2 border-rose-500 outline-none rounded-md hover:border-rose-800 focus:border-rose-800 drop-shadow-sm w-1/4"
+              className="border-solid border-2 border-rose-500 outline-none rounded-md hover:border-rose-800 focus:border-rose-800 p-2 drop-shadow-sm w-1/4"
               defaultValue={actionData?.data?.username}
             />
             </div>
@@ -160,7 +160,7 @@ export default function Login() {
               id="password-input"
               name="password"
               type="password"
-              className="border-solid border-2 border-rose-500 outline-none rounded-md hover:border-rose-800 focus:border-rose-800 drop-shadow-sm w-1/4"
+              className="border-solid border-2 border-rose-500 outline-none rounded-md hover:border-rose-800 focus:border-rose-800 p-2 drop-shadow-sm w-1/4"
               defaultValue={actionData?.data?.passwordHash}
             />
             </div>

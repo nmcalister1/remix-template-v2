@@ -6,7 +6,7 @@ interface props {
 export function UserCircle({ user, className}: props){
     console.log("User Circle Log: ", user?.profilePicture)
     return (
-        <div className={`${className} cursor-pointer bg-gray-400 rounded-full flex justify-center items-center`} 
+        <div className={`${className} bg-gray-400 rounded-full flex justify-center items-center`} 
         style={{
             backgroundSize: "cover",
             ...(user?.profilePicture ? { backgroundImage: `url(${user.profilePicture})` } : {})

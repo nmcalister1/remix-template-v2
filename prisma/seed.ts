@@ -44,6 +44,46 @@ async function seed() {
         passwordHash: "$2b$10$K7L1OJ45/4Y2nIvhRVpCe.FSmhDdWoXehVzJptJ/op0lSsvqNu/1u",
         hasAnsweredQuestion: false,
         profilePicture: process.env.BASE_BG_IMAGE,
+        fullname: "Kody Yuris",
+        age: "24",
+        description: "I am kody",
+      },
+    });
+    const noah = await db.user.create({
+      data: {
+        username: "noah",
+        passwordHash: "$2y$10$z3dKtbEODJc3sFIwgoKque5xrKouPWDVJq1tBfTq66d5Yum9dOoeq",
+        hasAnsweredQuestion: false,
+        profilePicture: process.env.BASE_BG_IMAGE,
+        fullname: "Noah McAlister",
+        age: "21",
+        description: "Making an app",
+        friends: [kody.username, "noah"],
+      },
+    });
+    await db.user.update({
+      where: {
+        username: "kody"
+      },
+      data: {
+        friends: [noah.username, kody.username]
+      }
+    })
+    const joe = await db.user.create({
+      data: {
+        username: "joe",
+        passwordHash: "$2y$10$AR2.loOpMjwnPkm7vIU/pOnkCfcYI29BX2dvQtDab68gil2xOlQxi",
+        hasAnsweredQuestion: false,
+        profilePicture: process.env.BASE_BG_IMAGE,
+        fullname: "Joe Daniel",
+        age: "26",
+        description: "I am Joe",
+      },
+    });
+    await db.question.create({
+      data: {
+        question: "How are you?",
+        currentQuestionNumber: 0,
       },
     });
 

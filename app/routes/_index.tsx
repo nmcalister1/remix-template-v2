@@ -1,7 +1,7 @@
 import { ActionFunctionArgs, LoaderFunctionArgs, json, redirect } from "@remix-run/node";
-import { Form, Link, useLoaderData } from "@remix-run/react";
+import { Form, Link, useLoaderData, useNavigate } from "@remix-run/react";
 import { format } from "date-fns";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { AnswerForm } from "~/components/answerForm";
 import { Avatars } from "~/components/avatars";
@@ -17,9 +17,21 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   if (!userId){
     throw redirect("/login")
   }
+
+  // load in the boolean from the question, if true, reload the page and reset the boolean to false --- maybe use a setInterval
+  // const navigate = useNavigate()
+
   const user = await getUser(request)
   const postsList = await db.post.findMany({
     orderBy: { createdAt: "desc" },
+  })
+  const question = await db.question.findUnique({
+    where: { questionId: "1" },
+  })
+
+  
+  const questionSchema = z.object({
+    question: z.string(),
   })
 
   const postsSchema = z.object({
@@ -75,6 +87,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     const postListItems = postsList.map((post) => ({
       ...postsSchema.parse(post)
     }))
+    const filteredPosts = postListItems.filter((postListItem) => user?.friends?.includes(postListItem.posterUsername));
+
     const commentListItems = commentsList.map((comment) => ({
       ...commentsSchema.parse(comment)
     }))
@@ -84,7 +98,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     const replyToReplyListItems = replyToReplyList.map((replyToReply) => ({
       ...replyToReplySchema.parse(replyToReply)
     }))
-    return json({ postListItems, commentListItems, replyListItems, replyToReplyListItems, user })
+    const questionItem = {...questionSchema.parse(question)}
+    return json({ filteredPosts, commentListItems, replyListItems, replyToReplyListItems, user, questionItem })
   } catch (e){
     console.error("there was an error fetching post data", e)
     return redirect('/')
@@ -143,11 +158,16 @@ export const action = async({ request }: ActionFunctionArgs) => {
       })
       return json({ errors, data: formPayload }, { status: 400 })
     } else {
-          const comment = await db.comment.create({
-            data: { content: newComment.data.comment, commenterId: userId, commenterUsername: user.username, commenterProfilePicture: user?.profilePicture, commentsPostId: newComment.data.postId }
-          })
+          try {
+            const comment = await db.comment.create({
+              data: { content: newComment.data.comment, commenterId: userId, commenterUsername: user.username, commenterProfilePicture: user?.profilePicture, commentsPostId: newComment.data.postId }
+            })
+            
+            return null
+          } catch(e){
+            return redirect("/")
+          }
           
-          return null
     }
   } else if (formPayload.reply){
     const replySchema = z.object({
@@ -166,11 +186,15 @@ export const action = async({ request }: ActionFunctionArgs) => {
       })
       return json({ errors, data: formPayload }, { status: 400 })
     } else {
+        try{
           const reply = await db.reply.create({
             data: { content: newReply.data.reply, replyerId: userId, replyerUsername: user.username, replyerProfilePicture: user?.profilePicture, replysCommentId: newReply.data.commentId, replysCommentUsername: newReply.data.commentUsername }
           })
           
           return null
+        } catch(e){
+          return redirect("/")
+        }
     }
   } else if (formPayload.replyToReply){
     const replySchema = z.object({
@@ -189,11 +213,16 @@ export const action = async({ request }: ActionFunctionArgs) => {
       })
       return json({ errors, data: formPayload }, { status: 400 })
     } else {
+        try{
           const replyToReply = await db.replies.create({
             data: { content: newReply.data.replyToReply, replyToReplyerId: userId, replyToReplyerUsername: user.username, replyToReplyerProfilePicture: user?.profilePicture, replyToReplysReplyId: newReply.data.replyId, replyToReplysReplyUsername: newReply.data.replyUsername }
           })
           
           return null
+        } catch(e){
+          return redirect("/")
+        }
+          
     }
   }
 }
@@ -203,6 +232,7 @@ export const action = async({ request }: ActionFunctionArgs) => {
 
 export default function IndexRoute(){
   const data = useLoaderData<typeof loader>()
+
   const [selectedPostId, setSelectedPostId] = useState("")
   const [isReplying, setIsReplying] = useState(false)
   const [isReplyingComments, setIsReplyingComments] = useState(false)
@@ -235,7 +265,7 @@ export default function IndexRoute(){
         <h1 className="flex justify-center p-4 text-xl md:text-3xl text-stone-900">
           Question of the Day:
         </h1>
-        <h1 className="flex justify-center p-4 text-2xl md:text-6xl font-bold text-stone-100 drop-shadow-lg">What is your favorite food?</h1>
+        <h1 className="flex justify-center p-4 text-2xl md:text-6xl font-bold text-stone-100 drop-shadow-lg">{data?.questionItem?.question}</h1>
       </div>
       <div className="md:p-6 h-screen">
       {data?.user?.hasAnsweredQuestion ? (
@@ -243,7 +273,8 @@ export default function IndexRoute(){
           <div className="bg-stone-100 p-2 rounded">
             <Avatars />
           </div>
-          {data.postListItems.map(({ postId, posterUsername, content, createdAt, posterProfilePicture }) => (
+          
+          {data.filteredPosts.map(({ postId, posterUsername, content, createdAt, posterProfilePicture }) => (
             <div key={postId}>
               <div className="drop-shadow-2xl">
               <div className="bg-stone-100 p-2 rounded-tr rounded-tl rounded-br-none rounded-bl-none mt-6 md:flex shadow-lg">
