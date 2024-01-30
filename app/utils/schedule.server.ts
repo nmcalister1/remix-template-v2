@@ -65,6 +65,7 @@ function getRandomDuration(minHours: number, maxHours: number): number {
     setInterval(async () => {
       await updateAndReset();
       const newRandomDuration = getRandomDuration(minHours, maxHours);
+    
       // Reset the interval with a new random duration
       setInterval(updateAndReset, newRandomDuration);
     }, randomDuration);

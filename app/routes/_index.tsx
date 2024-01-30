@@ -280,7 +280,7 @@ export default function IndexRoute(){
               <div className="bg-stone-100 p-2 rounded-tr rounded-tl rounded-br-none rounded-bl-none mt-6 md:flex shadow-lg">
                   
                   <ProfilePic classes="p-2 w-16 h-16 md:w-36 md:h-36 rounded-full drop-shadow-lg" source={posterProfilePicture} />
-                  <Link to="/login" className="font-light hover:text-rose-500 text-xs md:text-base inline sm:hidden ml-2">{posterUsername}</Link>
+                  <Link to={`/user/${posterUsername}`} className="font-normal underline text-stone-900 hover:text-rose-500 text-xs md:text-base inline sm:hidden ml-2">{posterUsername}</Link>
                   <span className="font-light text-xs md:text-base inline sm:hidden">&nbsp;-&nbsp;</span>
                   <p className="font-light text-xs md:text-base inline sm:hidden">posted at {format(createdAt, 'h:mm a')}</p>
                   
@@ -289,7 +289,7 @@ export default function IndexRoute(){
                   </div>
               </div>
               <div className="flex md:justify-end bg-stone-100 p-2 rounded-br rounded-bl rounded-tr-none rounded-tl-none">
-                  <Link to="/login" className="font-light hover:text-rose-500 text-xs md:text-base hidden md:inline mt-1">{posterUsername}</Link>
+                  <Link to={`/user/${posterUsername}`} className="font-normal underline text-stone-900 hover:text-rose-500 text-xs md:text-base hidden md:inline mt-1">{posterUsername}</Link>
                   <span className="font-light text-xs md:text-base hidden md:inline mt-1">&nbsp;-&nbsp;</span>
                   <p className="font-light text-xs md:text-base hidden md:inline mt-1">posted at {format(createdAt, 'h:mm a')}</p>
                   <span className="hidden md:inline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -314,7 +314,7 @@ export default function IndexRoute(){
                       <div className="p-2 rounded-tr rounded-tl rounded-br-none rounded-bl-none md:flex">
                         
                         <ProfilePic classes="p-2 w-16 h-16 md:w-36 md:h-36 rounded-full drop-shadow-lg" source={commenterProfilePicture} />
-                        <Link to="/login" className="font-light hover:text-rose-500 text-xs md:text-base inline sm:hidden ml-2">{commenterUsername}</Link>
+                        <Link to={`/user/${commenterUsername}`} className="font-normal underline text-stone-900 hover:text-rose-500 text-xs md:text-base inline sm:hidden ml-2">{commenterUsername}</Link>
                         <span className="font-light text-xs md:text-base inline sm:hidden">&nbsp;-&nbsp;</span>
                         <p className="font-light text-xs md:text-base inline sm:hidden">posted at {format(createdAt, 'h:mm a')}</p>
                         
@@ -323,7 +323,7 @@ export default function IndexRoute(){
                         </div>
                     </div>
                     <div className="flex md:justify-end p-2 rounded-br rounded-bl rounded-tr-none rounded-tl-none">
-                        <Link to="/login" className="font-light hover:text-rose-500 text-xs md:text-base hidden md:inline mt-1">{commenterUsername}</Link>
+                        <Link to={`/user/${commenterUsername}`} className="font-normal underline text-stone-900 hover:text-rose-500 text-xs md:text-base hidden md:inline mt-1">{commenterUsername}</Link>
                         <span className="font-light text-xs md:text-base hidden md:inline mt-1">&nbsp;-&nbsp;</span>
                         <p className="font-light text-xs md:text-base hidden md:inline mt-1">posted at {format(createdAt, 'h:mm a')}</p>
                         <span className="hidden md:inline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -345,7 +345,7 @@ export default function IndexRoute(){
                               <div className="p-2 rounded-tr rounded-tl rounded-br-none rounded-bl-none md:flex">
                                 
                                 <ProfilePic classes="p-2 w-16 h-16 md:w-36 md:h-36 rounded-full drop-shadow-lg" source={replyerProfilePicture} />
-                                <Link to="/login" className="font-light hover:text-rose-500 text-xs md:text-base inline sm:hidden ml-2">{replyerUsername}</Link>
+                                <Link to={`/user/${replyerUsername}`} className="font-normal underline text-stone-900 hover:text-rose-500 text-xs md:text-base inline sm:hidden ml-2">{replyerUsername}</Link>
                                 <span className="font-light text-xs md:text-base inline sm:hidden">&nbsp;-&nbsp;</span>
                                 <p className="font-light text-xs md:text-base inline sm:hidden">posted at {format(createdAt, 'h:mm a')}</p>
                                 
@@ -354,7 +354,7 @@ export default function IndexRoute(){
                                 </div>
                             </div>
                             <div className="flex md:justify-end p-2 rounded-br rounded-bl rounded-tr-none rounded-tl-none">
-                                <Link to="/login" className="font-light hover:text-rose-500 text-xs md:text-base hidden md:inline mt-1">{replyerUsername}</Link>
+                                <Link to={`/user/${replyerUsername}`} className="font-normal underline text-stone-900 hover:text-rose-500 text-xs md:text-base hidden md:inline mt-1">{replyerUsername}</Link>
                                 <span className="font-light text-xs md:text-base hidden md:inline mt-1">&nbsp;-&nbsp;</span>
                                 <p className="font-light text-xs md:text-base hidden md:inline mt-1">posted at {format(createdAt, 'h:mm a')}</p>
                                 <span className="hidden md:inline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -375,7 +375,7 @@ export default function IndexRoute(){
                                     <div className="p-2 rounded-tr rounded-tl rounded-br-none rounded-bl-none md:flex">
                                       
                                       <ProfilePic classes="p-2 w-16 h-16 md:w-36 md:h-36 rounded-full drop-shadow-lg" source={replyToReplyerProfilePicture} />
-                                      <Link to="/login" className="font-light hover:text-rose-500 text-xs md:text-base inline sm:hidden ml-2">{replyToReplyerUsername}</Link>
+                                      <Link to={`/user/${replyToReplyerUsername}`} className="font-normal underline text-stone-900 hover:text-rose-500 text-xs md:text-base inline sm:hidden ml-2">{replyToReplyerUsername}</Link>
                                       <span className="font-light text-xs md:text-base inline sm:hidden">&nbsp;-&nbsp;</span>
                                       <p className="font-light text-xs md:text-base inline sm:hidden">posted at {format(createdAt, 'h:mm a')}</p>
                                       
@@ -384,7 +384,7 @@ export default function IndexRoute(){
                                       </div>
                                   </div>
                                   <div className="flex md:justify-end p-2 rounded-br rounded-bl rounded-tr-none rounded-tl-none">
-                                      <Link to="/login" className="font-light hover:text-rose-500 text-xs md:text-base hidden md:inline mt-1">{replyToReplyerUsername}</Link>
+                                      <Link to={`/user/${replyToReplyerUsername}`} className="font-normal underline text-stone-900 hover:text-rose-500 text-xs md:text-base hidden md:inline mt-1">{replyToReplyerUsername}</Link>
                                       <span className="font-light text-xs md:text-base hidden md:inline mt-1">&nbsp;-&nbsp;</span>
                                       <p className="font-light text-xs md:text-base hidden md:inline mt-1">posted at {format(createdAt, 'h:mm a')}</p>
                                       <span className="hidden md:inline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
