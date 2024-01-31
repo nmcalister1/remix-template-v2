@@ -172,11 +172,16 @@ export default function FriendsRoute(){
           }
       }, [])
     return (
-        <div className="bg-rose-700 h-screen">
-            <h1 className="text-stone-100 flex justify-center p-4 pt-8 text-2xl font-semibold">Type in your friend's username to send them a friend request</h1>
+        <div className="bg-rose-700 min-h-screen">
+          <div className="pt-6 pb-6">
+          <div className="bg-stone-100 p-6 drop-shadow-sm w-5/6 m-auto rounded-lg">
+          
+            <h1 className="text-indigo-700 flex justify-center p-4 pt-8 md:text-3xl m-auto font-bold text-lg text-center">Type in your friend's username to send them a friend request</h1>
+          
+           
             <Form method="post">
               <div className="flex justify-center p-5">
-                <input type="text" ref={inputRef} name="receiverUsername" className="border-solid border-2 border-rose-500 outline-none text-stone-900 rounded-md p-2 hover:border-rose-800 focus:border-rose-800 drop-shadow-sm w-1/4" placeholder="joemama69" />
+                <input type="text" ref={inputRef} name="receiverUsername" className="border-solid border-2 border-stone-600 outline-none text-stone-900 rounded-md p-2 hover:border-stone-400 focus:border-stone-400 drop-shadow-sm md:w-1/4" placeholder="joemama69" />
               </div>
               <div>
                 <div className="text-green-400 font-bold flex justify-center">{actionData?.successFriendRequest}</div>
@@ -204,23 +209,26 @@ export default function FriendsRoute(){
                 </ErrorMessage>
               </div>
               <div className="flex justify-center p-5">
-                <button type="submit" className="bg-rose-500 hover:bg-rose-700 text-white font-bold py-2 px-4 rounded drop-shadow-lg">Send Friend Request</button>
+                <button type="submit" className="bg-stone-700 hover:bg-stone-500 text-white font-bold py-1 px-2 rounded drop-shadow-lg">Send Friend Request</button>
               </div>
             </Form>
             <div className="border-t border-stone-300 w-9/12 border-2 mx-auto my-8"></div>
             <div>
-              {data?.filteredFriendReqs ? data.filteredFriendReqs.map(({ id, senderUsername, receiverUsername }) => (
+              {data?.filteredFriendReqs?.length !== 0 ? data.filteredFriendReqs.map(({ id, senderUsername, receiverUsername }) => (
                 <Form key={id} method="post" className="flex justify-center items-center p-3">
-                  <h1 className="text-stone-100 font-semibold pr-4">Friend request from <Link to={`/user/${senderUsername}`} className="text-green-300 font-extrabold text-xl hover:text-green-500">{senderUsername}</Link></h1>
+                  <h1 className="text-stone-700 font-semibold pr-4 text-sm md:text-base">Friend request from <Link to={`/user/${senderUsername}`} className="text-indigo-600 font-extrabold hover:text-indigo-400">{senderUsername}</Link></h1>
                   <input type="hidden" name="friendRequestId" value={id} />
                   <input type="hidden" name="senderUsername" value={senderUsername} />
                   <input type="hidden" name="receiver" value={receiverUsername} />
-                  <button type="submit" name="friendReq" value="decline" className="bg-rose-600 hover:bg-rose-800 text-white font-bold py-1 px-2 rounded drop-shadow-lg">Decline</button>
-                  <button type="submit" name="friendReq" value="accept" className="bg-rose-500 hover:bg-rose-700 text-white mx-2 font-bold py-1 px-2 rounded drop-shadow-lg">Accept</button>
+                  <button type="submit" name="friendReq" value="decline" className="bg-stone-500 hover:bg-stone-700 text-white text-xs font-bold py-1 px-2 rounded drop-shadow-sm">Decline</button>
+                  <button type="submit" name="friendReq" value="accept" className="bg-rose-500 hover:bg-rose-700 text-white text-xs mx-2 font-bold py-1 px-2 rounded drop-shadow-sm">Accept</button>
                 </Form>
               )) : null}
             </div>
+            </div>
+            </div>
         </div>
+        
     )
 }
 

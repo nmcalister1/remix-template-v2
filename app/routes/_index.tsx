@@ -285,7 +285,7 @@ export default function IndexRoute(){
               <div className="bg-stone-100 p-2 rounded-tr rounded-tl rounded-br-none rounded-bl-none mt-6 md:flex shadow-lg">
                   
                   <ProfilePic classes="p-2 w-16 h-16 md:w-36 md:h-36 rounded-full drop-shadow-lg" source={posterProfilePicture} />
-                  <Link to={`/user/${posterUsername}`} className="font-normal underline text-stone-900 hover:text-rose-500 text-xs md:text-base inline sm:hidden ml-2">{posterUsername}</Link>
+                  <Link to={`/user/${posterUsername}`} className="font-normal underline text-indigo-700 hover:text-indigo-500 text-xs md:text-base inline sm:hidden ml-2">{posterUsername}</Link>
                   <span className="font-light text-xs md:text-base inline sm:hidden">&nbsp;-&nbsp;</span>
                   <p className="font-light text-xs md:text-base inline sm:hidden">posted at {format(createdAt, 'h:mm a')}</p>
                   
@@ -294,7 +294,7 @@ export default function IndexRoute(){
                   </div>
               </div>
               <div className="flex md:justify-end bg-stone-100 p-2 rounded-br rounded-bl rounded-tr-none rounded-tl-none">
-                  <Link to={`/user/${posterUsername}`} className="font-normal underline text-stone-900 hover:text-rose-500 text-xs md:text-base hidden md:inline mt-1">{posterUsername}</Link>
+                  <Link to={`/user/${posterUsername}`} className="font-normal underline text-indigo-700 hover:text-indigo-500 text-xs md:text-base hidden md:inline mt-1">{posterUsername}</Link>
                   <span className="font-light text-xs md:text-base hidden md:inline mt-1">&nbsp;-&nbsp;</span>
                   <p className="font-light text-xs md:text-base hidden md:inline mt-1">posted at {format(createdAt, 'h:mm a')}</p>
                   <span className="hidden md:inline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -302,7 +302,7 @@ export default function IndexRoute(){
                   <button onClick={() => {
                       setIsReplying(true)
                       setSelectedReplyPostId(postId)
-                      }} className="bg-rose-500 hover:bg-rose-700 text-white font-bold p-1 rounded text-sm md:text-base m-auto md:m-0 md:mr-4 drop-shadow-lg">Reply</button>
+                      }} className="bg-rose-500 hover:bg-rose-700 text-white font-bold p-1 rounded text-sm md:text-base ml-36 md:m-0 md:mr-4 drop-shadow-lg">Reply</button>
               </div>
               </div>
 
@@ -319,16 +319,16 @@ export default function IndexRoute(){
                       <div className="p-2 rounded-tr rounded-tl rounded-br-none rounded-bl-none md:flex">
                         
                         <ProfilePic classes="p-2 w-16 h-16 md:w-36 md:h-36 rounded-full drop-shadow-lg" source={commenterProfilePicture} />
-                        <Link to={`/user/${commenterUsername}`} className="font-normal underline text-stone-900 hover:text-rose-500 text-xs md:text-base inline sm:hidden ml-2">{commenterUsername}</Link>
+                        <Link to={`/user/${commenterUsername}`} className="font-normal underline text-indigo-700 hover:text-indigo-500 text-xs md:text-base inline sm:hidden ml-2">{commenterUsername}</Link>
                         <span className="font-light text-xs md:text-base inline sm:hidden">&nbsp;-&nbsp;</span>
                         <p className="font-light text-xs md:text-base inline sm:hidden">posted at {format(createdAt, 'h:mm a')}</p>
                         
                         <div className="md:ml-7 p-2">
-                        <p className="font-medium text-sm md:text-base"><Link to="/login" className="text-rose-600 hover:text-rose-400">@{posterUsername}<span>&nbsp;</span></Link>{content}</p>
+                        <p className="font-medium text-sm md:text-base"><Link to={`/user/${posterUsername}`}  className="text-rose-400 hover:text-rose-600">@{posterUsername}<span>&nbsp;</span></Link>{content}</p>
                         </div>
                     </div>
                     <div className="flex md:justify-end p-2 rounded-br rounded-bl rounded-tr-none rounded-tl-none">
-                        <Link to={`/user/${commenterUsername}`} className="font-normal underline text-stone-900 hover:text-rose-500 text-xs md:text-base hidden md:inline mt-1">{commenterUsername}</Link>
+                        <Link to={`/user/${commenterUsername}`} className="font-normal underline text-indigo-700 hover:text-indigo-500 text-xs md:text-base hidden md:inline mt-1">{commenterUsername}</Link>
                         <span className="font-light text-xs md:text-base hidden md:inline mt-1">&nbsp;-&nbsp;</span>
                         <p className="font-light text-xs md:text-base hidden md:inline mt-1">posted at {format(createdAt, 'h:mm a')}</p>
                         <span className="hidden md:inline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -350,16 +350,16 @@ export default function IndexRoute(){
                               <div className="p-2 rounded-tr rounded-tl rounded-br-none rounded-bl-none md:flex">
                                 
                                 <ProfilePic classes="p-2 w-16 h-16 md:w-36 md:h-36 rounded-full drop-shadow-lg" source={replyerProfilePicture} />
-                                <Link to={`/user/${replyerUsername}`} className="font-normal underline text-stone-900 hover:text-rose-500 text-xs md:text-base inline sm:hidden ml-2">{replyerUsername}</Link>
+                                <Link to={`/user/${replyerUsername}`} className="font-normal underline text-indigo-700 hover:text-indigo-500 text-xs md:text-base inline sm:hidden ml-2">{replyerUsername}</Link>
                                 <span className="font-light text-xs md:text-base inline sm:hidden">&nbsp;-&nbsp;</span>
                                 <p className="font-light text-xs md:text-base inline sm:hidden">posted at {format(createdAt, 'h:mm a')}</p>
                                 
                                 <div className="md:ml-7 p-2">
-                                <p className="font-medium text-sm md:text-base"><Link to="/login" className="text-rose-600 hover:text-rose-400">@{replysCommentUsername}<span>&nbsp;</span></Link>{content}</p>
+                                <p className="font-medium text-sm md:text-base"><Link to={`/user/${replysCommentUsername}`}  className="text-rose-400 hover:text-rose-600">@{replysCommentUsername}<span>&nbsp;</span></Link>{content}</p>
                                 </div>
                             </div>
                             <div className="flex md:justify-end p-2 rounded-br rounded-bl rounded-tr-none rounded-tl-none">
-                                <Link to={`/user/${replyerUsername}`} className="font-normal underline text-stone-900 hover:text-rose-500 text-xs md:text-base hidden md:inline mt-1">{replyerUsername}</Link>
+                                <Link to={`/user/${replyerUsername}`} className="font-normal underline text-indigo-700 hover:text-indigo-500 text-xs md:text-base hidden md:inline mt-1">{replyerUsername}</Link>
                                 <span className="font-light text-xs md:text-base hidden md:inline mt-1">&nbsp;-&nbsp;</span>
                                 <p className="font-light text-xs md:text-base hidden md:inline mt-1">posted at {format(createdAt, 'h:mm a')}</p>
                                 <span className="hidden md:inline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -380,16 +380,16 @@ export default function IndexRoute(){
                                     <div className="p-2 rounded-tr rounded-tl rounded-br-none rounded-bl-none md:flex">
                                       
                                       <ProfilePic classes="p-2 w-16 h-16 md:w-36 md:h-36 rounded-full drop-shadow-lg" source={replyToReplyerProfilePicture} />
-                                      <Link to={`/user/${replyToReplyerUsername}`} className="font-normal underline text-stone-900 hover:text-rose-500 text-xs md:text-base inline sm:hidden ml-2">{replyToReplyerUsername}</Link>
+                                      <Link to={`/user/${replyToReplyerUsername}`} className="font-normal underline text-indigo-700 hover:text-indigo-500 text-xs md:text-base inline sm:hidden ml-2">{replyToReplyerUsername}</Link>
                                       <span className="font-light text-xs md:text-base inline sm:hidden">&nbsp;-&nbsp;</span>
                                       <p className="font-light text-xs md:text-base inline sm:hidden">posted at {format(createdAt, 'h:mm a')}</p>
                                       
                                       <div className="md:ml-7 p-2">
-                                      <p className="font-medium text-sm md:text-base"><Link to="/login" className="text-rose-600 hover:text-rose-400">@{replyToReplysReplyUsername}<span>&nbsp;</span></Link>{content}</p>
+                                      <p className="font-medium text-sm md:text-base"><Link to={`/user/${replyToReplysReplyUsername}`} className="text-rose-400 hover:text-rose-600">@{replyToReplysReplyUsername}<span>&nbsp;</span></Link>{content}</p>
                                       </div>
                                   </div>
                                   <div className="flex md:justify-end p-2 rounded-br rounded-bl rounded-tr-none rounded-tl-none">
-                                      <Link to={`/user/${replyToReplyerUsername}`} className="font-normal underline text-stone-900 hover:text-rose-500 text-xs md:text-base hidden md:inline mt-1">{replyToReplyerUsername}</Link>
+                                      <Link to={`/user/${replyToReplyerUsername}`} className="font-normal underline text-indigo-700 hover:text-indigo-500 text-xs md:text-base hidden md:inline mt-1">{replyToReplyerUsername}</Link>
                                       <span className="font-light text-xs md:text-base hidden md:inline mt-1">&nbsp;-&nbsp;</span>
                                       <p className="font-light text-xs md:text-base hidden md:inline mt-1">posted at {format(createdAt, 'h:mm a')}</p>
                                       <span className="hidden md:inline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>

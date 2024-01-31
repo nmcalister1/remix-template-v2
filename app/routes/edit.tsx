@@ -145,7 +145,7 @@ export default function EditProfile(){
         navigate('.', { replace: true })
     }
     return (
-        <div className="bg-rose-700 h-screen">
+        <div className="bg-rose-700 min-h-screen">
           <div className="pt-6 text-stone-600 font-medium">
             <div className="bg-stone-100 p-6 drop-shadow-lg w-5/6 m-auto rounded-lg">
                 <div className="mb-4 flex flex-col items-center justify-center">
@@ -192,7 +192,7 @@ export default function EditProfile(){
                         </ErrorMessage>
                     </div>
                     
-                    <p className="pt-6">Description:</p>
+                    <p className="pt-6">Bio:</p>
                     <Form method="post" className="flex flex-col items-center justify-center">
                         <textarea name="description" className="md:resize-none border-solid border-2 outline-none w-full border-rose-500 rounded-md p-2 text-stone-900 hover:border-rose-800 focus:border-rose-800" rows={4} defaultValue={data?.user?.description}></textarea>
                         <button type="submit" className="bg-rose-500 mt-2 hover:bg-rose-700 text-white mx-2 font-bold py-1 px-2 rounded drop-shadow-lg">Save</button> 

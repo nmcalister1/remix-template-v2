@@ -35,7 +35,6 @@ type FieldErrors = { [key: string]: string }
 
 export const action = async ({ request }: ActionFunctionArgs) => {
     const formPayload = Object.fromEntries(await request.formData())
-    console.log("FormPayload: ", formPayload)
     const redirectTo = validateUrl(
         (formPayload.redirectTo as string) || "/"
     )
@@ -45,7 +44,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         password: z.string().min(6, { message: "*Password must be more than 6 characters long" }),
     })
     const newUser = userSchema.safeParse(formPayload)
-    console.log("NewUser: ", newUser)
 
     if (!newUser.success){
         const errors: FieldErrors = {}
@@ -61,7 +59,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         switch (loginType){
             case "login": {
                 const user = await login({ username, password })
-                console.log({ user })
+    
                 if (!user){
                   return json({ loginType, username, password, error: `Username/Password combination is incorrect`}, {status: 400})
                 }
@@ -96,9 +94,9 @@ export default function Login() {
     setLoginType(event.target.value);
   };
   return (
-    <div className="bg-rose-700 m-auto h-screen p-5">
+    <div className="bg-rose-700 m-auto h-screen">
       <div data-light="">
-        <h1 className="flex justify-center text-5xl p-3 pb-4 font-bold text-stone-100 drop-shadow-2xl">Login</h1>
+        <h1 className="flex justify-center text-5xl pt-3 pb-4 font-bold text-stone-100 drop-shadow-2xl">Login</h1>
         <Form method="post">
           <input
             type="hidden"
@@ -107,7 +105,7 @@ export default function Login() {
               searchParams.get("redirectTo") ?? undefined
             }
           />
-          <fieldset className="border-2 border-white p-2 m-auto my-4 w-1/4 flex justify-center">
+          <fieldset className="border-2 border-white p-2 m-auto my-4 md:w-1/4 flex justify-center">
             <legend className="text-stone-100 m-auto drop-shadow-sm font-medium">
               Login or Register?
             </legend>
@@ -146,7 +144,7 @@ export default function Login() {
               type="text"
               id="username-input"
               name="username"
-              className="border-solid border-2 border-rose-500 outline-none rounded-md hover:border-rose-800 focus:border-rose-800 p-2 drop-shadow-sm w-1/4"
+              className="border-solid border-2 border-rose-500 outline-none rounded-md hover:border-rose-800 focus:border-rose-800 p-2 drop-shadow-sm md:w-1/4"
               defaultValue={actionData?.data?.username}
             />
             </div>
@@ -169,7 +167,7 @@ export default function Login() {
               id="password-input"
               name="password"
               type="password"
-              className="border-solid border-2 border-rose-500 outline-none rounded-md hover:border-rose-800 focus:border-rose-800 p-2 drop-shadow-sm w-1/4"
+              className="border-solid border-2 border-rose-500 outline-none rounded-md hover:border-rose-800 focus:border-rose-800 p-2 drop-shadow-sm md:w-1/4"
               defaultValue={actionData?.data?.passwordHash}
             />
             </div>
@@ -196,21 +194,11 @@ export default function Login() {
             ) : null}
           </div>
           <div className="flex justify-center">
-          <button type="submit"  className="bg-rose-900 hover:bg-rose-800 text-white font-bold p-1 w-1/4 mt-9 rounded-full">
+          <button type="submit"  className="bg-rose-500 hover:bg-rose-400 text-white font-bold p-1 md:w-1/4 w-3/4 mt-9 rounded drop-shadow-lg">
             Submit
           </button>
           </div>
         </Form>
-      </div>
-      <div className="flex justify-center bg-rose-700">
-        <ul className="flex justify-center p-3">
-          <li className="p-4 mx-2">
-            <Link to="/" className="text-stone-100 underline decoration-white hover:text-stone-200">Home</Link>
-          </li>
-          <li className="p-4 mx-2">
-            <Link to="/jokes" className="text-stone-100 underline decoration-white hover:text-stone-200">Friends</Link>
-          </li>
-        </ul>
       </div>
     </div>
   );

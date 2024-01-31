@@ -1,13 +1,13 @@
 import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { Link } from '@remix-run/react'
+import { Link, useLocation } from '@remix-run/react'
 import logo from '~/images/logo3.png'
 import classNames from 'classnames'
 import pfp from "~/images/pfp3.jpg"
 
 const navigation = [
-  { name: 'Home', to: '/', current: true },
+  { name: 'Home', to: '/', current: false },
   { name: 'Friends', to: '/friends', current: false },
 ]
 
@@ -18,6 +18,7 @@ type DataParameter = {
 }
 
 export default function NavBar({ data }: DataParameter) {
+  const location = useLocation()
   return (
     <Disclosure as="nav" className="bg-stone-800">
       {({ open }) => (
@@ -38,11 +39,14 @@ export default function NavBar({ data }: DataParameter) {
               </div>
               <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                 <div className="flex flex-shrink-0 items-center">
-                  <img
-                    className="h-8 w-auto rounded"
-                    src={logo}
-                    alt="Jex"
-                  />
+                  <Link to="/">
+                    <img
+                      className="h-8 w-auto rounded"
+                      src={logo}
+                      alt="Jex"
+                    />
+                  </Link>
+                  
                 </div>
                 <div className="hidden sm:ml-6 sm:block">
                   <div className="flex space-x-4">
@@ -52,7 +56,7 @@ export default function NavBar({ data }: DataParameter) {
                         to={item.to}
                         prefetch='intent'
                         className={classNames(
-                          item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                          item.to === location.pathname ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
                           'rounded-md px-3 py-2 text-sm font-medium'
                         )}
                         aria-current={item.current ? 'page' : undefined}
@@ -64,14 +68,14 @@ export default function NavBar({ data }: DataParameter) {
                 </div>
               </div>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                <button
+                {/* <button
                   type="button"
                   className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                 >
                   <span className="absolute -inset-1.5" />
                   <span className="sr-only">View notifications</span>
                   <BellIcon className="h-6 w-6" aria-hidden="true" />
-                </button>
+                </button> */}
 
                 {/* Profile dropdown */}
                 <Menu as="div" className="relative ml-3">
