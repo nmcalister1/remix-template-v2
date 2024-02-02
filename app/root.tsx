@@ -1,4 +1,4 @@
-import { LinksFunction, LoaderFunctionArgs, json, redirect } from "@remix-run/node";
+import { LinksFunction, LoaderFunctionArgs, json } from "@remix-run/node";
 import { Links, LiveReload, Meta, Outlet, Scripts, isRouteErrorResponse, useLoaderData, useRouteError } from "@remix-run/react";
 import { PropsWithChildren } from "react";
 import stylesheet from "~/tailwind.css";

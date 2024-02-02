@@ -34,7 +34,6 @@ export const loader = async ({params, request }: LoaderFunctionArgs) => {
   try {
     const userItem = userSchema.parse(user)
     const filteredFriends = userUser?.friends.filter((friend) => user.username === friend) 
-    console.log(filteredFriends)
     return json({ userItem, filteredFriends })
   } catch (e){
     console.error("user not found", e)
@@ -88,9 +87,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         }
         
     } else if (formPayload.friendReq === "unfriend"){
-      console.log("inside the unfriend statement")
       const receiverUsername = formPayload.receiver
-      console.log("receiver username: ", receiverUsername)
         if (receiverUsername){
           const receiverUsernameValue = receiverUsername.toString()
 

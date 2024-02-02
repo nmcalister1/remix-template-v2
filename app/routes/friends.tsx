@@ -54,7 +54,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     if (!user){
       return json({ error: "*Must be logged in" })
     }
-    console.log("FormPayload" ,formPayload)
     if (formPayload.receiverUsername){
         const friendRequestSchema = z.object({
           receiverUsername: z.string()

@@ -10,7 +10,6 @@ export const action: ActionFunction = async ({ request }) => {
 
     // 2. Upload the avatar and get the image URL
     const imageUrl = await uploadAvatar(request) as string;
-    console.log("imageUrl from avatar.tsx", imageUrl)
 
     // 3. Update the user profile picture in the database
     await db.user.update({

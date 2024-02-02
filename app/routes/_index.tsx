@@ -1,7 +1,7 @@
 import { ActionFunctionArgs, LoaderFunctionArgs, json, redirect } from "@remix-run/node";
-import { Form, Link, useLoaderData, useNavigate } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
 import { format } from "date-fns";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { z } from "zod";
 import { AnswerForm } from "~/components/answerForm";
 import { Avatars } from "~/components/avatars";
@@ -17,9 +17,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   if (!userId){
     throw redirect("/login")
   }
-
-  // load in the boolean from the question, if true, reload the page and reset the boolean to false --- maybe use a setInterval
-  // const navigate = useNavigate()
 
   const user = await getUser(request)
   const postsList = await db.post.findMany({
@@ -122,7 +119,6 @@ export const action = async({ request }: ActionFunctionArgs) => {
       content: z.string().min(1, { message: "Must be more than 0 characters" }),
     })
     const newPost = postSchema.safeParse(formPayload)
-    console.log("New Post: ", newPost)
 
     if (!newPost.success){
       const errors: FieldErrors = {}
@@ -153,7 +149,6 @@ export const action = async({ request }: ActionFunctionArgs) => {
       postId: z.string(),
     })
     const newComment = commentSchema.safeParse(formPayload)
-    console.log("New Post: ", newComment)
 
     if (!newComment.success){
       const errors: FieldErrors = {}
@@ -181,7 +176,6 @@ export const action = async({ request }: ActionFunctionArgs) => {
       commentUsername: z.string(),
     })
     const newReply = replySchema.safeParse(formPayload)
-    console.log("New Post: ", newReply)
 
     if (!newReply.success){
       const errors: FieldErrors = {}
@@ -208,7 +202,6 @@ export const action = async({ request }: ActionFunctionArgs) => {
       replyUsername: z.string(),
     })
     const newReply = replySchema.safeParse(formPayload)
-    console.log("New Post: ", newReply)
 
     if (!newReply.success){
       const errors: FieldErrors = {}

@@ -1,5 +1,3 @@
-import { Link } from "@remix-run/react";
-
 interface ProfilePicProps {
     classes: string;
     source: string;

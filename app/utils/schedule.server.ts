@@ -22,11 +22,15 @@ async function getNextQuestion(){
 }
 
 async function updateQuestionAndReset() {
-    const oldQuestionNumber = await getNextQuestion()
+    let oldQuestionNumber = await getNextQuestion()
+    if (oldQuestionNumber === 7){
+      oldQuestionNumber = 0
+    }
+    
     
     if (oldQuestionNumber !== undefined) {
       const newQuestion = questions[oldQuestionNumber + 1];
-  
+      
       await db.question.update({
         where: { questionId: "1" },
         data: {
@@ -44,29 +48,16 @@ async function updateQuestionAndReset() {
     })
     await db.post.deleteMany({})
 }
-
-function getRandomDuration(minHours: number, maxHours: number): number {
-    const randomFraction = Math.random();
-    const randomHours = minHours + randomFraction * (maxHours - minHours);
-    return randomHours * 60 * 60 * 1000; // Convert hours to milliseconds
-  }
   
 
   export async function scheduleTask() {
-    const minHours = 15;
-    const maxHours = 24;
+    const twentyFourHoursToMilliseconds = 86400000
   
     const updateAndReset = async () => {
       await updateQuestionAndReset();
+      setTimeout(updateAndReset, twentyFourHoursToMilliseconds);
     };
-  
-    const randomDuration = getRandomDuration(minHours, maxHours);
-  
-    setInterval(async () => {
-      await updateAndReset();
-      const newRandomDuration = getRandomDuration(minHours, maxHours);
-    
-      // Reset the interval with a new random duration
-      setInterval(updateAndReset, newRandomDuration);
-    }, randomDuration);
+
+    await updateAndReset()
+
   }

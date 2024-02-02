@@ -1,5 +1,5 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { Form, Link, json, redirect, useActionData, useSearchParams } from "@remix-run/react";
+import { Form, json, redirect, useActionData, useSearchParams } from "@remix-run/react";
 import { HTMLAttributes, useState } from "react";
 import { z } from "zod";
 
@@ -51,7 +51,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
             const path = issue.path.join(".")
             errors[path] = issue.message
         })
-        console.log(errors)
         return json({ errors, data: formPayload }, { status: 400 })
     } else {
         const { username, password } = newUser.data
@@ -137,7 +136,6 @@ export default function Login() {
           </fieldset>
           <div>
             <label htmlFor="username-input" className="flex justify-center text-stone-100 font-medium drop-shadow-sm p-2">Username</label>
-            {/* show this text only if the register checkbox is checked */}
             {loginType === 'register' && <p className="flex justify-center text-stone-100 font-light">&#40;*username cannot be changed after registration&#41;</p>}
             <div className="flex justify-center">
             <input
@@ -204,12 +202,3 @@ export default function Login() {
   );
 }
 
-// export function ErrorBoundary(){
-//     return (
-//       <div className="bg-rose-700 m-auto h-screen p-5">
-//         <p className="text-stone-100 text-3xl font-semibold flex justify-center p-5 drop-shadow-sm">You are already signed in. Make sure to logout before signing in or registering a new account.</p>
-//         <Link to="/" prefetch="intent" className="bg-rose-500 hover:bg-rose-700 text-white font-bold py-2 px-4 m-4 rounded drop-shadow-lg flex justify-center">Home</Link>
-//       </div>
-//     )
- 
-// }
