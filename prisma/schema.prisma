@@ -91,13 +91,13 @@ model Replies {
   content String
 }
 
-model Question {
-  questionId String @id @default("1")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  question String
-  currentQuestionNumber Int
-}
+// model Question {
+//   questionId String @id @default("1")
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+//   question String
+//   currentQuestionNumber Int
+// }
 
 
 

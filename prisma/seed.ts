@@ -80,12 +80,12 @@ async function seed() {
         description: "I am Joe",
       },
     });
-    await db.question.create({
-      data: {
-        question: "How are you?",
-        currentQuestionNumber: 0,
-      },
-    });
+    // await db.question.create({
+    //   data: {
+    //     question: "How are you?",
+    //     currentQuestionNumber: 0,
+    //   },
+    // });
 
     const posts: Post[] = await Promise.all(
       getPosts().map((post) => {

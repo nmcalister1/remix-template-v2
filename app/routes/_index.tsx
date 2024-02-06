@@ -22,14 +22,14 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const postsList = await db.post.findMany({
     orderBy: { createdAt: "desc" },
   })
-  const question = await db.question.findUnique({
-    where: { questionId: "1" },
-  })
+  // const question = await db.question.findUnique({
+  //   where: { questionId: "1" },
+  // })
 
   
-  const questionSchema = z.object({
-    question: z.string(),
-  })
+  // const questionSchema = z.object({
+  //   question: z.string(),
+  // })
 
   const postsSchema = z.object({
     postId: z.string(),
@@ -100,8 +100,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     const replyToReplyListItems = replyToReplyList.map((replyToReply) => ({
       ...replyToReplySchema.parse(replyToReply)
     }))
-    const questionItem = {...questionSchema.parse(question)}
-    return json({ filteredPosts, profilePictures, commentListItems, replyListItems, replyToReplyListItems, user, questionItem })
+    // const questionItem = {...questionSchema.parse(question)}
+    return json({ filteredPosts, profilePictures, commentListItems, replyListItems, replyToReplyListItems, user })
   } catch (e){
     console.error("there was an error fetching post data", e)
     return redirect('/')
@@ -263,7 +263,7 @@ export default function IndexRoute(){
         <h1 className="flex justify-center p-4 text-xl md:text-3xl text-stone-900">
           Question of the Day:
         </h1>
-        <h1 className="flex justify-center p-4 text-2xl md:text-6xl font-bold text-stone-100 drop-shadow-lg">{data?.questionItem?.question}</h1>
+        <h1 className="flex justify-center p-4 text-2xl md:text-6xl font-bold text-stone-100 drop-shadow-lg">What is your favorite color?</h1>
       </div>
       <div className="md:p-6 h-screen">
       {data?.user?.hasAnsweredQuestion ? (
