@@ -55,7 +55,7 @@ async function updateQuestionAndReset() {
   
     const updateAndReset = async () => {
       await updateQuestionAndReset();
-      setTimeout(updateAndReset, 30000);
+      setTimeout(updateAndReset, twentyFourHoursToMilliseconds);
     };
 
     await updateAndReset()
